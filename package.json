@@ -36,6 +36,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@internationalized/date": "^3.5.5",
 		"bits-ui": "^0.21.12",
 		"clsx": "^2.1.1",
 		"lucide-svelte": "^0.414.0",

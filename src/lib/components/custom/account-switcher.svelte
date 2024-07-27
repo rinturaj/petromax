@@ -24,7 +24,7 @@
 		}
 	];
 
-	let selectedAccount = accounts[0];
+	export let selectedAccount = accounts[0];
 </script>
 
 <Select.Root

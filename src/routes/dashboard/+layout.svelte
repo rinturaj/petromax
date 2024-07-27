@@ -2,14 +2,18 @@
 	import * as Resizable from '$lib/components/ui/resizable/index';
 	import { Separator } from '$lib/components/ui/separator';
 	import Nav from '$lib/components/custom/nav.svelte';
-	import { primaryRoutes } from '../../lib/config';
+	import { primaryRoutes, salesRoutes } from '../../lib/config';
 	import AccountSwitcher from '../../lib/components/custom/account-switcher.svelte';
 	import { cn } from '../../lib/utils';
 	import { page } from '$app/stores';
+	import ScrollArea from '../../lib/components/ui/scroll-area/scroll-area.svelte';
+	import { componentSide } from '../../lib/component.store';
 
-	export let defaultLayout = [265, 440, 655];
+	export let defaultLayout = [265, 655, 340];
 	export let defaultCollapsed = false;
 	export let navCollapsedSize: number = 4;
+
+	let selectedAcount: any;
 
 	let isCollapsed = defaultCollapsed;
 
@@ -59,20 +63,24 @@
 			<div
 				class={cn('flex h-[52px] items-center justify-center', isCollapsed ? 'h-[52px]' : 'px-2')}
 			>
-				<AccountSwitcher {isCollapsed} />
+				<AccountSwitcher bind:selectedAccount={selectedAcount} {isCollapsed} />
 			</div>
 			<Separator />
-			<Nav {isCollapsed} routes={primaryRoutes} />
+			<Nav {isCollapsed} routes={selectedAcount?.label == 'Sales' ? salesRoutes : primaryRoutes} />
 		</Resizable.Pane>
 		<Resizable.Handle withHandle />
-		<Resizable.Pane defaultSize={defaultLayout[1]} minSize={30}>
-			<slot></slot>
+		<Resizable.Pane defaultSize={defaultLayout[1]} minSize={30} class="bg-slate-100">
+			<ScrollArea class="h-screen">
+				<slot></slot>
+			</ScrollArea>
 		</Resizable.Pane>
 		<Resizable.Handle withHandle />
-		<Resizable.Pane defaultSize={defaultLayout[2]} minSize={30}>
-			{#if $page.data.component}
-				<svelte:component this={$page.data.component} />
-			{/if}
+		<Resizable.Pane
+			defaultSize={defaultLayout[2]}
+			minSize={20}
+			class="flex items-start bg-slate-50 pt-4"
+		>
+			<svelte:component this={$componentSide} />
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
 </div>

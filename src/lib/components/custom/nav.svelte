@@ -46,11 +46,11 @@
 			{:else}
 				<Button
 					href={route.link}
-					variant={$page.url.pathname == '/dashboard/' + route.link ? 'default' : 'ghost'}
+					variant={$page.url.pathname == route.link ? 'default' : 'ghost'}
 					size="sm"
 					class={cn('justify-start', {
 						'dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white':
-							($page.url.pathname == '/dashboard/' + route.link ? 'default' : 'ghost') === 'default'
+							($page.url.pathname == route.link ? 'default' : 'ghost') === 'default'
 					})}
 				>
 					<svelte:component this={route.icon} class="mr-2 size-4" aria-hidden="true" />

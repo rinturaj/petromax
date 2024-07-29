@@ -54,9 +54,9 @@ export const primaryRoutes: Route[] = [
 		variant: 'ghost'
 	},
 	{
-		title: 'Nossil',
+		title: 'Nosil',
 		label: '23',
-		link: '/dashboard/nossil',
+		link: '/dashboard/nosil',
 
 		icon: Fuel,
 		variant: 'ghost'

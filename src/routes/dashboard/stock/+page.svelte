@@ -58,6 +58,7 @@
 			<Table.Head>Dip Stock</Table.Head>
 			<Table.Head>Closing Stock</Table.Head>
 			<Table.Head>Closing Stock(Auto)</Table.Head>
+			<Table.Head>Discrepancy</Table.Head>
 		</Table.Row>
 	</Table.Header>
 	<Table.Body>

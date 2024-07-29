@@ -3,7 +3,6 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
 	import { componentSide } from '../../component.store';
 	import Button from '../ui/button/button.svelte';
 </script>
@@ -11,19 +10,18 @@
 <div class="w-full p-3">
 	<!-- <Card.Root> -->
 	<Card.Header>
-		<Card.Title>Add User</Card.Title>
-		<Card.Description>Create or update user details</Card.Description>
+		<Card.Title>Add Nosil</Card.Title>
+		<Card.Description>Create or update Nosil details</Card.Description>
 	</Card.Header>
 	<Card.Content>
 		<div class="grid gap-6">
 			<div class="grid gap-3">
-				<Label for="name">Name</Label>
+				<Label for="name">Nosile Name</Label>
 				<Input id="name" type="text" class="w-full" placeholder="name here" value="" />
 			</div>
-
 			<div class="grid gap-3">
-				<Label for="name">Hourly Charge</Label>
-				<Input id="name" type="Numbet" class="w-full" placeholder="price " value="" />
+				<Label for="description">Description</Label>
+				<Textarea id="description" value="" class="min-h-32" />
 			</div>
 		</div>
 	</Card.Content>
@@ -37,5 +35,5 @@
 		>
 		<Button>Add</Button>
 	</Card.Footer>
-	<!-- </xCard.Root> -->
+	<!-- </Card.Root> -->
 </div>

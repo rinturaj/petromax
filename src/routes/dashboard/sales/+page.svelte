@@ -28,6 +28,16 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { componentSide } from '../../../lib/component.store';
+	import SaleOrder from '../../../lib/components/custom/saleOrder.svelte';
+
+	componentSide.set(null);
+
+	function addComponent() {
+		console.log('Adduser' + '');
+
+		componentSide.set(SaleOrder);
+	}
 </script>
 
 <div class="flex min-h-screen w-full flex-col bg-muted/40 p-4">
@@ -42,7 +52,7 @@
 					</Card.Description>
 				</Card.Header>
 				<Card.Footer>
-					<Button>Create New Order</Button>
+					<Button on:click={addComponent}>Create New Order</Button>
 				</Card.Footer>
 			</Card.Root>
 			<Card.Root>

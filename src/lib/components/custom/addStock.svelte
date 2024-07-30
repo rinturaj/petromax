@@ -35,7 +35,7 @@
 			</div>
 		</div>
 	</Card.Content>
-	<Card.Footer>
+	<Card.Footer class="justify-end">
 		<Button
 			on:click={() => {
 				componentSide.set(null);

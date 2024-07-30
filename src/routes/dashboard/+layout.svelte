@@ -88,7 +88,7 @@
 </div>
 
 <Dialog.Root open={$componentSide != null}>
-	<Dialog.Content class="">
+	<Dialog.Content class="max-w-5xl p-0">
 		<!-- <Dialog.Header>
 			<Dialog.Title>Edit profile</Dialog.Title>
 			<Dialog.Description>

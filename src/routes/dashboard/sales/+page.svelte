@@ -1,47 +1,40 @@
 <script lang="ts">
-	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
-	import ChevronRight from 'lucide-svelte/icons/chevron-right';
-	import Copy from 'lucide-svelte/icons/copy';
-	import CreditCard from 'lucide-svelte/icons/credit-card';
 	import File from 'lucide-svelte/icons/file';
 	import ListFilter from 'lucide-svelte/icons/list-filter';
-	import EllipsisVertical from 'lucide-svelte/icons/ellipsis-vertical';
-	import Package from 'lucide-svelte/icons/package';
-	import Package2 from 'lucide-svelte/icons/package-2';
-	import PanelLeft from 'lucide-svelte/icons/panel-left';
-	import Search from 'lucide-svelte/icons/search';
-	import Settings from 'lucide-svelte/icons/settings';
-	import ShoppingCart from 'lucide-svelte/icons/shopping-cart';
-	import Truck from 'lucide-svelte/icons/truck';
-	import UsersRound from 'lucide-svelte/icons/users-round';
 
 	import { Badge } from '$lib/components/ui/badge/index.js';
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import * as Pagination from '$lib/components/ui/pagination/index.js';
 	import { Progress } from '$lib/components/ui/progress/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
-	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
-	import * as Tabs from '$lib/components/ui/tabs/index.js';
-	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { componentSide } from '../../../lib/component.store';
 	import SaleOrder from '../../../lib/components/custom/saleOrder.svelte';
+	import { CalendarIcon, Edit, Expand } from 'lucide-svelte';
+	import { Trash } from 'svelte-radix';
+	import Input from '../../../lib/components/ui/input/input.svelte';
+	import { cn } from '$lib/utils.js';
+	import { Calendar } from '$lib/components/ui/calendar/index.js';
+	import * as Popover from '$lib/components/ui/popover/index.js';
+	import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date';
+	import SaleOrderView from '../../../lib/components/custom/saleOrderView.svelte';
+	const df = new DateFormatter('en-US', {
+		dateStyle: 'long'
+	});
 
+	let value: DateValue | undefined = undefined;
 	componentSide.set(null);
 
 	function addComponent() {
-		console.log('Adduser' + '');
-
 		componentSide.set(SaleOrder);
+	}
+	function viewSales() {
+		componentSide.set(SaleOrderView);
 	}
 </script>
 
 <div class="flex min-h-screen w-full flex-col bg-muted/40 p-4">
-	<div class="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
+	<div class="grid auto-rows-max items-start gap-4 lg:col-span-2">
 		<div class="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
 			<Card.Root class="sm:col-span-2">
 				<Card.Header class="pb-3">
@@ -80,170 +73,100 @@
 				</Card.Footer>
 			</Card.Root>
 		</div>
-		<Tabs.Root value="week">
-			<div class="flex items-center">
-				<Tabs.List>
-					<Tabs.Trigger value="week">Week</Tabs.Trigger>
-					<Tabs.Trigger value="month">Month</Tabs.Trigger>
-					<Tabs.Trigger value="year">Year</Tabs.Trigger>
-				</Tabs.List>
-				<div class="ml-auto flex items-center gap-2">
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger asChild let:builder>
-							<Button variant="outline" size="sm" class="h-7 gap-1 text-sm" builders={[builder]}>
-								<ListFilter class="h-3.5 w-3.5" />
-								<span class="sr-only sm:not-sr-only">Filter</span>
-							</Button>
-						</DropdownMenu.Trigger>
-						<DropdownMenu.Content align="end">
-							<DropdownMenu.Label>Filter by</DropdownMenu.Label>
-							<DropdownMenu.Separator />
-							<DropdownMenu.CheckboxItem checked>Fulfilled</DropdownMenu.CheckboxItem>
-							<DropdownMenu.CheckboxItem>Declined</DropdownMenu.CheckboxItem>
-							<DropdownMenu.CheckboxItem>Refunded</DropdownMenu.CheckboxItem>
-						</DropdownMenu.Content>
-					</DropdownMenu.Root>
-					<Button size="sm" variant="outline" class="h-7 gap-1 text-sm">
-						<File class="h-3.5 w-3.5" />
-						<span class="sr-only sm:not-sr-only">Export</span>
-					</Button>
-				</div>
+		<div class="flex items-center">
+			<div>
+				<Popover.Root>
+					<Popover.Trigger asChild let:builder>
+						<Button
+							variant="outline"
+							class={cn(
+								'w-[240px] justify-start text-left font-normal',
+								!value && 'text-muted-foreground'
+							)}
+							builders={[builder]}
+						>
+							<CalendarIcon class="mr-2 h-4 w-4" />
+							{value ? df.format(value.toDate(getLocalTimeZone())) : 'Pick a date'}
+						</Button>
+					</Popover.Trigger>
+					<Popover.Content class="w-auto p-0" align="start">
+						<Calendar bind:value />
+					</Popover.Content>
+				</Popover.Root>
 			</div>
-			<Tabs.Content value="week">
-				<Card.Root>
-					<Card.Header class="px-7">
-						<Card.Title>Orders</Card.Title>
-						<Card.Description>Recent orders from your store.</Card.Description>
-					</Card.Header>
-					<Card.Content>
-						<Table.Root>
-							<Table.Header>
-								<Table.Row>
-									<Table.Head>Customer</Table.Head>
-									<Table.Head class="hidden sm:table-cell">Type</Table.Head>
-									<Table.Head class="hidden sm:table-cell">Status</Table.Head>
-									<Table.Head class="hidden md:table-cell">Date</Table.Head>
-									<Table.Head class="text-right">Amount</Table.Head>
-								</Table.Row>
-							</Table.Header>
-							<Table.Body>
-								<Table.Row class="bg-accent">
-									<Table.Cell>
-										<div class="font-medium">Liam Johnson</div>
-										<div class="hidden text-sm text-muted-foreground md:inline">
-											liam@example.com
-										</div>
-									</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">Sale</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">
-										<Badge class="text-xs" variant="secondary">Fulfilled</Badge>
-									</Table.Cell>
-									<Table.Cell class="hidden md:table-cell">2023-06-23</Table.Cell>
-									<Table.Cell class="text-right">$250.00</Table.Cell>
-								</Table.Row>
-								<Table.Row>
-									<Table.Cell>
-										<div class="font-medium">Olivia Smith</div>
-										<div class="hidden text-sm text-muted-foreground md:inline">
-											olivia@example.com
-										</div>
-									</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">Refund</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">
-										<Badge class="text-xs" variant="outline">Declined</Badge>
-									</Table.Cell>
-									<Table.Cell class="hidden md:table-cell">2023-06-24</Table.Cell>
-									<Table.Cell class="text-right">$150.00</Table.Cell>
-								</Table.Row>
-								<Table.Row>
-									<Table.Cell>
-										<div class="font-medium">Liam Johnson</div>
-										<div class="hidden text-sm text-muted-foreground md:inline">
-											liam@example.com
-										</div>
-									</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">Sale</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">
-										<Badge class="text-xs" variant="secondary">Fulfilled</Badge>
-									</Table.Cell>
-									<Table.Cell class="hidden md:table-cell">2023-06-23</Table.Cell>
-									<Table.Cell class="text-right">$250.00</Table.Cell>
-								</Table.Row>
-								<Table.Row>
-									<Table.Cell>
-										<div class="font-medium">Noah Williams</div>
-										<div class="hidden text-sm text-muted-foreground md:inline">
-											noah@example.com
-										</div>
-									</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">Subscription</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">
-										<Badge class="text-xs" variant="secondary">Fulfilled</Badge>
-									</Table.Cell>
-									<Table.Cell class="hidden md:table-cell">2023-06-25</Table.Cell>
-									<Table.Cell class="text-right">$350.00</Table.Cell>
-								</Table.Row>
-								<Table.Row>
-									<Table.Cell>
-										<div class="font-medium">Emma Brown</div>
-										<div class="hidden text-sm text-muted-foreground md:inline">
-											emma@example.com
-										</div>
-									</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">Subscription</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">
-										<Badge class="text-xs" variant="secondary">Fulfilled</Badge>
-									</Table.Cell>
-									<Table.Cell class="hidden md:table-cell">2023-06-26</Table.Cell>
-									<Table.Cell class="text-right">$450.00</Table.Cell>
-								</Table.Row>
-								<Table.Row>
-									<Table.Cell>
-										<div class="font-medium">Liam Johnson</div>
-										<div class="hidden text-sm text-muted-foreground md:inline">
-											liam@example.com
-										</div>
-									</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">Sale</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">
-										<Badge class="text-xs" variant="secondary">Fulfilled</Badge>
-									</Table.Cell>
-									<Table.Cell class="hidden md:table-cell">2023-06-23</Table.Cell>
-									<Table.Cell class="text-right">$250.00</Table.Cell>
-								</Table.Row>
-								<Table.Row>
-									<Table.Cell>
-										<div class="font-medium">Olivia Smith</div>
-										<div class="hidden text-sm text-muted-foreground md:inline">
-											olivia@example.com
-										</div>
-									</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">Refund</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">
-										<Badge class="text-xs" variant="outline">Declined</Badge>
-									</Table.Cell>
-									<Table.Cell class="hidden md:table-cell">2023-06-24</Table.Cell>
-									<Table.Cell class="text-right">$150.00</Table.Cell>
-								</Table.Row>
-								<Table.Row>
-									<Table.Cell>
-										<div class="font-medium">Emma Brown</div>
-										<div class="hidden text-sm text-muted-foreground md:inline">
-											emma@example.com
-										</div>
-									</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">Sale</Table.Cell>
-									<Table.Cell class="hidden sm:table-cell">
-										<Badge class="text-xs" variant="secondary">Fulfilled</Badge>
-									</Table.Cell>
-									<Table.Cell class="hidden md:table-cell">2023-06-26</Table.Cell>
-									<Table.Cell class="text-right">$450.00</Table.Cell>
-								</Table.Row>
-							</Table.Body>
-						</Table.Root>
-					</Card.Content>
-				</Card.Root>
-			</Tabs.Content>
-		</Tabs.Root>
+			<div class="ml-auto flex items-center gap-2">
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger asChild let:builder>
+						<Button variant="outline" size="sm" class="h-7 gap-1 text-sm" builders={[builder]}>
+							<ListFilter class="h-3.5 w-3.5" />
+							<span class="sr-only sm:not-sr-only">Filter</span>
+						</Button>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content align="end">
+						<DropdownMenu.Label>Filter by</DropdownMenu.Label>
+						<DropdownMenu.Separator />
+						<DropdownMenu.CheckboxItem checked>Fulfilled</DropdownMenu.CheckboxItem>
+						<DropdownMenu.CheckboxItem>Declined</DropdownMenu.CheckboxItem>
+						<DropdownMenu.CheckboxItem>Refunded</DropdownMenu.CheckboxItem>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+				<Button size="sm" variant="outline" class="h-7 gap-1 text-sm">
+					<File class="h-3.5 w-3.5" />
+					<span class="sr-only sm:not-sr-only">Export</span>
+				</Button>
+			</div>
+		</div>
+		<Card.Root>
+			<Card.Header class="flex flex-row justify-between px-7">
+				<div>
+					<Card.Title>Sales</Card.Title>
+					<Card.Description>showing 22-07-2024 date data</Card.Description>
+				</div>
+				<div>
+					<Input type="search" placeholder="search"></Input>
+				</div>
+			</Card.Header>
+			<Card.Content>
+				<Table.Root>
+					<Table.Header>
+						<Table.Row>
+							<Table.Head>Name</Table.Head>
+							<Table.Head class="hidden sm:table-cell">Date</Table.Head>
+							<Table.Head class="hidden sm:table-cell">Shift Time</Table.Head>
+							<Table.Head class="hidden md:table-cell">Total</Table.Head>
+							<Table.Head class="hidden md:table-cell">Discrepancy</Table.Head>
+							<Table.Head class="text-right">Action</Table.Head>
+						</Table.Row>
+					</Table.Header>
+					<Table.Body>
+						{#each [1, 2, 3] as item}
+							<Table.Row class="">
+								<Table.Cell>
+									<div class="font-medium">Liam Johnson</div>
+								</Table.Cell>
+								<Table.Cell class="hidden sm:table-cell">2023-06-23</Table.Cell>
+								<Table.Cell class="hidden sm:table-cell">
+									<Badge class="mx-1 text-xs" variant="default">23:00</Badge>-
+									<Badge class="text-xs" variant="default">5:00</Badge>
+								</Table.Cell>
+								<Table.Cell class="hidden md:table-cell">$250.00</Table.Cell>
+								<Table.Cell class="hidden text-green-700 md:table-cell">+$250.00</Table.Cell>
+								<Table.Cell class="text-right">
+									<Button on:click={addComponent} size="icon" variant="ghost">
+										<Edit size={16}></Edit>
+									</Button>
+									<Button on:click={viewSales} size="icon" variant="outline">
+										<Expand size={16}></Expand>
+									</Button>
+									<Button size="icon" variant="destructive">
+										<Trash size={16}></Trash>
+									</Button>
+								</Table.Cell>
+							</Table.Row>
+						{/each}
+					</Table.Body>
+				</Table.Root>
+			</Card.Content>
+		</Card.Root>
 	</div>
 </div>

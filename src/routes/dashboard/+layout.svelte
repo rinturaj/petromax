@@ -13,7 +13,7 @@
 
 	export let defaultLayout = [265, 655, 340];
 	export let defaultCollapsed = false;
-	export let navCollapsedSize: number = 4;
+	export let navCollapsedSize = 4;
 
 	let selectedAcount: any;
 

@@ -8,6 +8,8 @@
 	import Button from '../ui/button/button.svelte';
 	import Separator from '../ui/separator/separator.svelte';
 	import ScrollArea from '../ui/scroll-area/scroll-area.svelte';
+	import { Description } from '../ui/dialog';
+	import Badge from '../ui/badge/badge.svelte';
 
 	const fruits = [
 		{ value: 'apple', label: 'Apple' },
@@ -21,99 +23,29 @@
 <div class="w-full">
 	<!-- <Card.Root> -->
 	<Card.Header>
-		<Card.Title>New Sale</Card.Title>
-		<Card.Description>Create new sale</Card.Description>
+		<Card.Title>Name</Card.Title>
+		<Card.Description>
+			Shift Time :
+			<Badge class="mx-1 text-xs" variant="default">23:00</Badge>-
+			<Badge class="text-xs" variant="default">5:00</Badge></Card.Description
+		>
 	</Card.Header>
 	<Card.Content>
 		<div class="grid grid-cols-3 gap-3 rounded-lg border bg-slate-100 p-2">
 			<div class="grid gap-3">
 				<Label for="name">Date</Label>
-				<Input id="name" type="date" class="block" placeholder="price " value="" />
+				<h6 class="font-bold text-slate-900">22-08-2024</h6>
 			</div>
 			<div class="grid gap-3">
 				<Label for="name">Petrol Price</Label>
-				<Input id="name" type="number" class="block" placeholder="price " value="" />
+				<h6 class="font-bold text-blue-600">$103</h6>
 			</div>
 			<div class="grid gap-3">
 				<Label for="name">Diesel Price</Label>
-				<Input id="name" type="number" class="block" placeholder="price " value="" />
+				<h6 class="font-bold text-yellow-600">$103</h6>
 			</div>
 		</div>
 
-		<div class="grid grid-cols-2 grid-rows-1 gap-4 pt-3">
-			<div class=" border-r pr-4">
-				<div class="grid gap-6">
-					<!-- <div class="grid gap-3">
-                        <Calendar class="rounded-md border shadow" />
-                    </div> -->
-
-					<div class="grid gap-3">
-						<Label for="name">Employee</Label>
-						<Select.Root>
-							<Select.Trigger>
-								<Select.Value placeholder="Select a fruit" />
-							</Select.Trigger>
-							<Select.Content>
-								<Select.Group>
-									<Select.Label>Fruits</Select.Label>
-									{#each fruits as fruit}
-										<Select.Item value={fruit.value} label={fruit.label}>{fruit.label}</Select.Item>
-									{/each}
-								</Select.Group>
-							</Select.Content>
-							<Select.Input name="favoriteFruit" />
-						</Select.Root>
-					</div>
-
-					<div class="grid grid-cols-2 gap-2">
-						<div class="grid gap-3">
-							<Label for="name">Check In</Label>
-							<Input id="name" class="block" type="time" placeholder="price " value="" />
-						</div>
-						<div class="grid gap-3">
-							<Label for="name">Check Out</Label>
-							<Input id="name" class="block" type="time" placeholder="price " value="" />
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="grid gap-6">
-				<div class="grid gap-3">
-					<Label for="name">Nosil</Label>
-					<Select.Root>
-						<Select.Trigger>
-							<Select.Value placeholder="Select" />
-						</Select.Trigger>
-						<Select.Content>
-							<Select.Group>
-								<Select.Label>Nosil</Select.Label>
-								{#each ['HSD', 'MS', 'MS1', 'HSD1'] as fruit}
-									<Select.Item value={fruit} label={fruit}>{fruit}</Select.Item>
-								{/each}
-							</Select.Group>
-						</Select.Content>
-						<Select.Input name="favoriteFruit" />
-					</Select.Root>
-				</div>
-				<div class="grid grid-cols-4 items-end gap-2">
-					<div class="grid gap-3">
-						<Label for="name">Opening</Label>
-						<Input id="name" class="block" type="number" placeholder="Reading " value="" />
-					</div>
-					<div class="grid gap-3">
-						<Label for="name">Closing</Label>
-						<Input id="name" class="block" type="number" placeholder="Reading " value="" />
-					</div>
-					<div class="grid gap-3">
-						<Label for="name">Test</Label>
-						<Input id="name" class="block" type="number" placeholder="Reading " value="" />
-					</div>
-					<div class="grid gap-3">
-						<Button>Add</Button>
-					</div>
-				</div>
-			</div>
-		</div>
 		<ScrollArea class="w-100 mt-6 h-56">
 			<h6 class="sticky font-extrabold">Reading</h6>
 
@@ -152,26 +84,26 @@
 		</ScrollArea>
 		<h6 class="sticky pb-3 font-extrabold">Collection</h6>
 
-		<div class="grid grid-cols-5 gap-2">
+		<div class="grid grid-cols-5 gap-2 rounded-lg border bg-blue-50 p-3">
 			<div class="grid gap-1">
 				<Label for="name">By Cash</Label>
-				<Input id="name" class="block" type="number" placeholder="Reading " value="" />
+				<h6 class=" font-semibold text-blue-800">11231231</h6>
 			</div>
 			<div class="grid gap-1">
 				<Label for="name">UPI</Label>
-				<Input id="name" class="block" type="number" placeholder="Reading " value="" />
+				<h6 class=" font-semibold text-blue-800">11231231</h6>
 			</div>
 			<div class="grid gap-1">
 				<Label for="name">Card</Label>
-				<Input id="name" class="block" type="number" placeholder="Reading " value="" />
+				<h6 class=" font-semibold text-blue-800">11231231</h6>
 			</div>
 			<div class="grid gap-1">
 				<Label for="name">HP Pay</Label>
-				<Input id="name" class="block" type="number" placeholder="Reading " value="" />
+				<h6 class=" font-semibold text-blue-800">11231231</h6>
 			</div>
 			<div class="grid gap-1">
 				<Label for="name">Credit</Label>
-				<Input id="name" class="block" type="number" placeholder="Reading " value="" />
+				<h6 class=" font-semibold text-rose-600">11231231</h6>
 			</div>
 		</div>
 	</Card.Content>
@@ -189,12 +121,16 @@
 				<h6 class=" text-xs text-muted-foreground">Actuals</h6>
 				<h6 class="text-sm font-semibold">$11222</h6>
 			</div>
-			<div class="grid">
+			<!-- <div class="grid">
 				<h6 class=" text-xs text-muted-foreground">Difference</h6>
 				<h6 class="text-sm font-extrabold text-green-600">$11222</h6>
-			</div>
+			</div> -->
 		</div>
-		<div>
+		<div class="grid">
+			<h6 class=" text-xs text-muted-foreground">Difference</h6>
+			<h6 class="text-sm font-extrabold text-green-600">$11222</h6>
+		</div>
+		<!-- <div>
 			<Button
 				on:click={() => {
 					componentSide.set(null);
@@ -203,7 +139,7 @@
 				class="mr-3">Cancel</Button
 			>
 			<Button>Submit</Button>
-		</div>
+		</div> -->
 	</Card.Footer>
 	<!-- </xCard.Root> -->
 </div>

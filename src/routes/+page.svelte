@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import Button from '../lib/components/ui/button/button.svelte';
 </script>
 
@@ -28,7 +29,7 @@
 			<div class="flex flex-col space-y-2 text-center">
 				<h1 class="text-2xl font-semibold tracking-tight">Please Login</h1>
 				<p class="text-sm text-muted-foreground">Enter your email below to create your account</p>
-				<Button>Login</Button>
+				<Button href={base + '/dashboard'}>Login</Button>
 			</div>
 		</div>
 	</div>

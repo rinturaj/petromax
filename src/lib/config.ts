@@ -4,6 +4,7 @@ import * as Icons from './icons';
 import { Boxes } from 'lucide-svelte';
 import { Fuel } from 'lucide-svelte';
 import { PaintBucket } from 'lucide-svelte';
+import { base } from '$app/paths';
 
 export type Route = {
 	title: string;
@@ -17,14 +18,14 @@ export const salesRoutes: Route[] = [
 	{
 		title: 'Sales',
 		label: '',
-		link: '/dashboard/sales',
+		link: base + '/dashboard/sales',
 		icon: Box,
 		variant: 'ghost'
 	},
 	{
 		title: 'Expenses ',
 		label: '',
-		link: '/dashboard/expenses',
+		link: base + '/dashboard/expenses',
 		icon: DollarSign,
 		variant: 'ghost'
 	}
@@ -33,14 +34,14 @@ export const primaryRoutes: Route[] = [
 	{
 		title: 'Stock',
 		label: '',
-		link: '/dashboard/stock',
+		link: base + '/dashboard/stock',
 		icon: Box,
 		variant: 'ghost'
 	},
 	{
 		title: 'Oil Stock',
 		label: '',
-		link: '/dashboard/oilstock',
+		link: base + '/dashboard/oilstock',
 
 		icon: PaintBucket,
 		variant: 'ghost'
@@ -48,7 +49,7 @@ export const primaryRoutes: Route[] = [
 	{
 		title: 'Staff',
 		label: '',
-		link: '/dashboard/staff',
+		link: base + '/dashboard/staff',
 
 		icon: Icons.Users,
 		variant: 'ghost'
@@ -56,8 +57,7 @@ export const primaryRoutes: Route[] = [
 	{
 		title: 'Nosil',
 		label: '23',
-		link: '/dashboard/nosil',
-
+		link: base + '/dashboard/nosil',
 		icon: Fuel,
 		variant: 'ghost'
 	}

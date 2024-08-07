@@ -13,10 +13,7 @@
 				background-image:
 					url(https://images.unsplash.com/photo-1695018854357-546031da9e6b?q=80&w=2948&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);"
 		/>
-		<div class="relative z-20 flex items-center rounded-xl">
-			<!-- <Command class="mr-2 h-6 w-6" /> -->
-			Petromax
-		</div>
+		<div class="relative z-20 flex items-center rounded-xl">\ Petromax</div>
 		<div class="relative z-20 mt-auto">
 			<blockquote class="space-y-2">
 				<p class="text-lg"></p>

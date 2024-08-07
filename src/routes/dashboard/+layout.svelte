@@ -76,29 +76,11 @@
 				<slot></slot>
 			</ScrollArea>
 		</Resizable.Pane>
-		<!-- <Resizable.Handle withHandle />
-		<Resizable.Pane
-			defaultSize={defaultLayout[2]}
-			minSize={20}
-			class="flex items-start bg-slate-50 pt-4"
-		>
-			<svelte:component this={$componentSide} />
-		</Resizable.Pane> -->
 	</Resizable.PaneGroup>
 </div>
 
 <Dialog.Root open={$componentSide != null}>
 	<Dialog.Content class="max-w-5xl p-0">
-		<!-- <Dialog.Header>
-			<Dialog.Title>Edit profile</Dialog.Title>
-			<Dialog.Description>
-				Make changes to your profile here. Click save when you're done.
-			</Dialog.Description>
-		</Dialog.Header> -->
 		<svelte:component this={$componentSide} />
-
-		<!-- <Dialog.Footer>
-			<Button type="submit">Save changes</Button>
-		</Dialog.Footer> -->
 	</Dialog.Content>
 </Dialog.Root>

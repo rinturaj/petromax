@@ -15,6 +15,9 @@
 	const add = () => {
 		componentSide.set(AddExpenses);
 	};
+	const settled = () => {
+		componentSide.set(AddExpenses);
+	};
 </script>
 
 <div class="flex min-h-screen w-full flex-col bg-muted/40 p-4">
@@ -90,9 +93,10 @@
 						<Table.Root>
 							<Table.Header>
 								<Table.Row>
-									<Table.Head>Date</Table.Head>
-									<Table.Head class="hidden sm:table-cell">Note</Table.Head>
-									<Table.Head class="hidden sm:table-cell">Details</Table.Head>
+									<Table.Head>Name</Table.Head>
+									<Table.Head class="hidden sm:table-cell">Vehicle Number</Table.Head>
+									<Table.Head class="hidden sm:table-cell">Date</Table.Head>
+									<Table.Head class="">Type</Table.Head>
 									<Table.Head class="text-right">Amount</Table.Head>
 								</Table.Row>
 							</Table.Header>
@@ -100,10 +104,12 @@
 								<Table.Row class="bg-accent">
 									<Table.Cell>
 										<div class="font-medium">Liam Johnson</div>
+										<div class="font-normal">91xxxxxxxx</div>
 									</Table.Cell>
 									<Table.Cell class="hidden sm:table-cell">Sale</Table.Cell>
+									<Table.Cell class="hidden sm:table-cell">22-33--33</Table.Cell>
 									<Table.Cell class="hidden sm:table-cell">
-										<Badge class="text-xs" variant="secondary">Fulfilled</Badge>
+										<Badge class="bg-red-400 text-xs" variant="default">Credit</Badge>
 									</Table.Cell>
 									<Table.Cell class="text-right">$250.00</Table.Cell>
 								</Table.Row>

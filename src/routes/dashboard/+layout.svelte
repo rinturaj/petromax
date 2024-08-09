@@ -7,7 +7,7 @@
 	import { cn } from '../../lib/utils';
 	import { page } from '$app/stores';
 	import ScrollArea from '../../lib/components/ui/scroll-area/scroll-area.svelte';
-	import { componentSide, isAuthenticated } from '../../lib/component.store';
+	import { componentSide, isAuthenticated, logout } from '../../lib/component.store';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import Button from '../../lib/components/ui/button/button.svelte';
 	import { onMount } from 'svelte';
@@ -92,9 +92,24 @@
 					<Separator />
 					<div class="p-2 text-center">
 						{#if isCollapsed}
-							<Button variant="outline" size="icon"><LogOut></LogOut></Button>
+							<Button
+								on:click={() => {
+									logout();
+									goto('/');
+								}}
+								variant="outline"
+								size="icon"><LogOut></LogOut></Button
+							>
 						{:else}
-							<Button class="w-full" variant="outline" size="sm">
+							<Button
+								on:click={() => {
+									logout();
+									goto('/');
+								}}
+								class="w-full"
+								variant="outline"
+								size="sm"
+							>
 								<LogOut class="mr-2" size={14}></LogOut>Logout</Button
 							>
 						{/if}
@@ -102,7 +117,9 @@
 					<Separator />
 					<div class="p-2 text-center">
 						{#if isCollapsed}
-							<Button variant="outline" size="icon"><FolderSync></FolderSync></Button>
+							<Button variant="outline" size="icon">
+								<FolderSync></FolderSync>
+							</Button>
 						{:else}
 							<Button class="w-full" variant="outline" size="sm">
 								<FolderSync class="mr-2" size={14}></FolderSync>

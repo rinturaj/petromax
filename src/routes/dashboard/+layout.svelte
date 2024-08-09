@@ -7,13 +7,27 @@
 	import { cn } from '../../lib/utils';
 	import { page } from '$app/stores';
 	import ScrollArea from '../../lib/components/ui/scroll-area/scroll-area.svelte';
-	import { componentSide } from '../../lib/component.store';
+	import { componentSide, isAuthenticated } from '../../lib/component.store';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import Button from '../../lib/components/ui/button/button.svelte';
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+	import { derived } from 'svelte/store';
+	import { FolderSync, LogOut } from 'lucide-svelte';
 
 	export let defaultLayout = [265, 655, 340];
 	export let defaultCollapsed = false;
 	export let navCollapsedSize = 4;
+
+	export let data;
+
+	onMount(() => {
+		if (!$isAuthenticated) {
+			goto('/');
+		}
+	});
+
+	console.log(data);
 
 	let selectedAcount: any;
 
@@ -35,11 +49,7 @@
 </script>
 
 <div class="hidden h-screen md:block">
-	<Resizable.PaneGroup
-		direction="horizontal"
-		{onLayoutChange}
-		class="h-full max-h-[800px] items-stretch"
-	>
+	<Resizable.PaneGroup direction="horizontal" {onLayoutChange} class="h-full items-stretch">
 		<Resizable.Pane
 			defaultSize={defaultLayout[0]}
 			collapsedSize={navCollapsedSize}
@@ -49,26 +59,59 @@
 			{onCollapse}
 			{onExpand}
 		>
-			<div
-				class={cn(
-					'm-1 flex h-[52px] items-center rounded-md bg-slate-950 font-extrabold text-white',
-					isCollapsed ? 'h-[52px] justify-center' : 'justify-start px-2'
-				)}
-			>
-				{#if isCollapsed}
-					<h5>P</h5>
-				{:else}
-					<h5>Petromax</h5>
-				{/if}
+			<div class="flex h-full flex-col justify-between">
+				<div>
+					<div
+						class={cn(
+							'm-1 flex h-[52px] items-center rounded-md bg-slate-950 font-extrabold text-white',
+							isCollapsed ? 'h-[52px] justify-center' : 'justify-start px-2'
+						)}
+					>
+						{#if isCollapsed}
+							<h5>P</h5>
+						{:else}
+							<h5>Petromax</h5>
+						{/if}
+					</div>
+					<Separator />
+					<div
+						class={cn(
+							'flex h-[52px] items-center justify-center',
+							isCollapsed ? 'h-[52px]' : 'px-2'
+						)}
+					>
+						<AccountSwitcher bind:selectedAccount={selectedAcount} {isCollapsed} />
+					</div>
+					<Separator />
+					<Nav
+						{isCollapsed}
+						routes={selectedAcount?.label == 'Sales' ? salesRoutes : primaryRoutes}
+					/>
+				</div>
+				<div>
+					<Separator />
+					<div class="p-2 text-center">
+						{#if isCollapsed}
+							<Button variant="outline" size="icon"><LogOut></LogOut></Button>
+						{:else}
+							<Button class="w-full" variant="outline" size="sm">
+								<LogOut class="mr-2" size={14}></LogOut>Logout</Button
+							>
+						{/if}
+					</div>
+					<Separator />
+					<div class="p-2 text-center">
+						{#if isCollapsed}
+							<Button variant="outline" size="icon"><FolderSync></FolderSync></Button>
+						{:else}
+							<Button class="w-full" variant="outline" size="sm">
+								<FolderSync class="mr-2" size={14}></FolderSync>
+								DB Sync</Button
+							>
+						{/if}
+					</div>
+				</div>
 			</div>
-			<Separator />
-			<div
-				class={cn('flex h-[52px] items-center justify-center', isCollapsed ? 'h-[52px]' : 'px-2')}
-			>
-				<AccountSwitcher bind:selectedAccount={selectedAcount} {isCollapsed} />
-			</div>
-			<Separator />
-			<Nav {isCollapsed} routes={selectedAcount?.label == 'Sales' ? salesRoutes : primaryRoutes} />
 		</Resizable.Pane>
 		<Resizable.Handle withHandle />
 		<Resizable.Pane defaultSize={defaultLayout[1]} minSize={30} class="bg-slate-100">

@@ -28,6 +28,8 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import Label from '../../../lib/components/ui/label/label.svelte';
+	import { ArrowBigRight } from 'lucide-svelte';
 </script>
 
 <div class="flex min-h-screen w-full flex-col bg-muted/40 p-4">
@@ -35,14 +37,18 @@
 		<div class="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
 			<Card.Root class="sm:col-span-2">
 				<Card.Header class="pb-3">
-					<Card.Title>Your Orders</Card.Title>
-					<Card.Description class="max-w-lg text-balance leading-relaxed">
-						Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful
-						Analysis.
-					</Card.Description>
+					<Card.Title>Update Price</Card.Title>
+					<Card.Description>last updated on 22-05-1993</Card.Description>
 				</Card.Header>
 				<Card.Footer>
-					<Button>Create New Order</Button>
+					<Label>
+						Petrol Price
+						<Input class="mt-1" placeholder="price"></Input>
+					</Label>
+					<Label class="ml-2">
+						Diesel Price
+						<Input class="mt-1" placeholder="price"></Input>
+					</Label>
 				</Card.Footer>
 			</Card.Root>
 			<Card.Root>
@@ -56,6 +62,18 @@
 					<Card.Description>Diesel Price</Card.Description>
 					<Card.Title class="text-3xl">$5,329</Card.Title>
 				</Card.Header>
+			</Card.Root>
+			<Card.Root class="sm:col-span-4">
+				<Card.Header class="pb-3">
+					<Card.Title>Sync Your Database</Card.Title>
+					<Card.Description class=" text-balance leading-relaxed">
+						Select a folder to store your database backup. This backup file can be used to restore
+						your data to IndexedDB in case of data loss in the browser.
+					</Card.Description>
+				</Card.Header>
+				<Card.Footer>
+					<Input type="file"></Input>
+				</Card.Footer>
 			</Card.Root>
 		</div>
 	</div>

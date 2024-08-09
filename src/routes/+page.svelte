@@ -11,6 +11,7 @@
 	import { goto } from '$app/navigation';
 	import { Beaker } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
+	import { login } from '../lib/component.store';
 
 	onMount(async () => {
 		db.userAccount.add({
@@ -63,6 +64,7 @@
 						let logged = await LoginApi.login(email, password);
 						if (logged) {
 							goto(base + '/dashboard/sales');
+							login();
 							toast.success('Welcome to Petromax ');
 						} else {
 							toast.error('Invalid Credentials ', {

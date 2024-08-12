@@ -63,14 +63,14 @@ export const primaryRoutes: Route[] = [
 	},
 	{
 		title: 'Nosil',
-		label: '23',
+		label: '',
 		link: base + '/dashboard/nosil',
 		icon: Fuel,
 		variant: 'ghost'
 	},
 	{
 		title: 'Miscellaneous',
-		label: '23',
+		label: '',
 		link: base + '/dashboard/misc',
 		icon: UtilityPole,
 		variant: 'ghost'

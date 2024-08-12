@@ -3,7 +3,7 @@ import Adduser from './components/custom/adduser.svelte';
 
 export const componentSide = writable();
 
-export const isAuthenticated = writable(false);
+export const isAuthenticated = writable(true);
 
 export function login() {
 	isAuthenticated.set(true);

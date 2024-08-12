@@ -12,3 +12,15 @@ export class LoginApi {
 		return false;
 	}
 }
+
+export class PriceApi {
+	static async add(petrol: number, deisel: number) {
+		let result = await db.price.put({
+			id: 1,
+			diesel: deisel,
+			petrol: petrol,
+			updatedOn: new Date()
+		});
+		return result;
+	}
+}

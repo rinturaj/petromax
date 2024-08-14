@@ -14,6 +14,7 @@
 	import { goto } from '$app/navigation';
 	import { derived } from 'svelte/store';
 	import { FolderSync, LogOut } from 'lucide-svelte';
+	import { db, isStoragePersisted, persist } from '../../database/db';
 
 	export let defaultLayout = [265, 655, 340];
 	export let defaultCollapsed = false;
@@ -45,6 +46,40 @@
 	function onExpand() {
 		isCollapsed = false;
 		document.cookie = `PaneForge:collapsed=${false}`;
+	}
+
+	async function syncDatabase() {
+		const status = await isStoragePersisted();
+		console.log(status);
+
+		const inboxBucket = await (navigator as any).storageBuckets.open('petromax');
+		console.log(inboxBucket);
+
+		let idb = await inboxBucket.indexedDB.open('petromax');
+		console.log(idb);
+
+		// idb.add()
+		if (!status) {
+			await persist();
+			console.log('Make storage persistent now?', console.log('denied'), true);
+		}
+
+		if (navigator.storage && navigator.storage.persist) {
+			const isPersisted = await navigator.storage.persist();
+			console.log(`Persisted storage granted: ${isPersisted}`);
+		}
+
+		let dirHandle = await navigator.storage.getDirectory();
+		const handle = await dirHandle.getFileHandle('sync_data.json', { create: true });
+		console.log(handle);
+
+		await handle.requestPermission({ mode: 'readwrite', writable: true });
+		const writable = await handle.createWritable({
+			keepExistingData: false
+		});
+		await writable.write(JSON.stringify(await db.price.toArray()));
+		await writable.close();
+		console.log(await handle.getFile());
 	}
 </script>
 
@@ -117,11 +152,11 @@
 					<Separator />
 					<div class="p-2 text-center">
 						{#if isCollapsed}
-							<Button variant="outline" size="icon">
+							<Button on:click={syncDatabase} variant="outline" size="icon">
 								<FolderSync></FolderSync>
 							</Button>
 						{:else}
-							<Button class="w-full" variant="outline" size="sm">
+							<Button on:click={syncDatabase} class="w-full" variant="outline" size="sm">
 								<FolderSync class="mr-2" size={14}></FolderSync>
 								DB Sync</Button
 							>

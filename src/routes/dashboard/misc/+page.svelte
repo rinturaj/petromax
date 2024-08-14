@@ -17,6 +17,49 @@
 	let addPrice = () => {
 		PriceApi.add(petrol, diesel);
 	};
+	async function getNewFileHandle() {
+		const options: SaveFilePickerOptions = {
+			types: [
+				{
+					description: 'Text Files',
+					accept: {
+						'text/plain': ['.txt']
+					}
+				}
+			]
+		};
+		const [handle] = await window.showOpenFilePicker(options);
+		localStorage.setItem('sync_file_handle', handle.name);
+		await handle.requestPermission({ mode: 'readwrite', writable: true });
+		const writable = await handle.createWritable({
+			keepExistingData: false
+		});
+		await writable.write(JSON.stringify(await db.price.toArray()));
+		await writable.close();
+		console.log(await handle.getFile());
+
+		return handle;
+	}
+
+	async function verifyPermission(
+		fileHandle: { queryPermission: (arg0: {}) => any; requestPermission: (arg0: {}) => any },
+		readWrite: any
+	) {
+		const options: any = {};
+		if (readWrite) {
+			options.mode = 'readwrite';
+		}
+		// Check if permission was already granted. If so, return true.
+		if ((await fileHandle.queryPermission(options)) === 'granted') {
+			return true;
+		}
+		// Request permission. If the user grants permission, return true.
+		if ((await fileHandle.requestPermission(options)) === 'granted') {
+			return true;
+		}
+		// The user didn't grant permission, so return false.
+		return false;
+	}
 </script>
 
 <div class="flex min-h-screen w-full flex-col bg-muted/40 p-4">
@@ -60,7 +103,7 @@
 					</Card.Description>
 				</Card.Header>
 				<Card.Footer>
-					<Input type="file"></Input>
+					<Button on:click={getNewFileHandle}>Sync with local file</Button>
 				</Card.Footer>
 			</Card.Root>
 		</div>

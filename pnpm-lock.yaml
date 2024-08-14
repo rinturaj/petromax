@@ -20,6 +20,12 @@ importers:
       dexie:
         specifier: ^4.0.8
         version: 4.0.8
+      dexie-observable:
+        specifier: 4.0.1-beta.13
+        version: 4.0.1-beta.13(dexie@4.0.8)
+      dexie-syncable:
+        specifier: 4.0.1-beta.13
+        version: 4.0.1-beta.13(dexie-observable@4.0.1-beta.13(dexie@4.0.8))(dexie@4.0.8)
       lucide-svelte:
         specifier: ^0.414.0
         version: 0.414.0(svelte@4.2.18)
@@ -60,6 +66,9 @@ importers:
       '@types/eslint':
         specifier: ^8.56.7
         version: 8.56.11
+      '@types/wicg-file-system-access':
+        specifier: ^2023.10.5
+        version: 2023.10.5
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.39)
@@ -486,6 +495,9 @@ packages:
   '@types/pug@2.0.10':
     resolution: {integrity: sha512-Sk/uYFOBAB7mb74XcpizmH0KOR2Pv3D2Hmrh1Dmy5BmK3MpdSa5kqZcg6EKBdklU0bFXX9gCfzvpnyUehrPIuA==}
 
+  '@types/wicg-file-system-access@2023.10.5':
+    resolution: {integrity: sha512-e9kZO9kCdLqT2h9Tw38oGv9UNzBBWaR1MzuAavxPcsV/7FJ3tWbU6RI3uB+yKIDPGLkGVbplS52ub0AcRLvrhA==}
+
   '@typescript-eslint/eslint-plugin@8.0.0-alpha.51':
     resolution: {integrity: sha512-989dk3/IA2HNdfl8T1Tj0+AEAtqHN5Cdac7Ff1N367Lh5e5xKi3nXWMkptbZaAEo/wi5+CZD8jngQ70wnCRweA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -717,6 +729,17 @@ packages:
 
   devalue@5.0.0:
     resolution: {integrity: sha512-gO+/OMXF7488D+u3ue+G7Y4AA3ZmUnB3eHJXmBTgNHvr4ZNzl36A0ZtG+XCRNYCkYx/bFmw4qtkoFLa+wSrwAA==}
+
+  dexie-observable@4.0.1-beta.13:
+    resolution: {integrity: sha512-axmgPk7yjoPwj+0DdQIE5s1MBXi+6XcIFIjBKdQAmSGpsLQSth/LHvMOQ3q3Wj6pwIE5hqIxg2GL75sVqQbhEw==}
+    peerDependencies:
+      dexie: ^3.0.2 || ^4.0.1-alpha.5
+
+  dexie-syncable@4.0.1-beta.13:
+    resolution: {integrity: sha512-D9GPf8Uxs4cW0leAmL07oNQ5rq1wRlRpPp/XkMLHbJqOv2tq/s5FHPBagKv7F7vUKbSUf6zb4aFwV4+7vJQWZg==}
+    peerDependencies:
+      dexie: ^3.0.2 || ^4.0.1-alpha.5
+      dexie-observable: ^4.0.1-beta.13
 
   dexie@4.0.8:
     resolution: {integrity: sha512-1G6cJevS17KMDK847V3OHvK2zei899GwpDiqfEXHP1ASvme6eWJmAp9AU4s1son2TeGkWmC0g3y8ezOBPnalgQ==}
@@ -1998,6 +2021,8 @@ snapshots:
 
   '@types/pug@2.0.10': {}
 
+  '@types/wicg-file-system-access@2023.10.5': {}
+
   '@typescript-eslint/eslint-plugin@8.0.0-alpha.51(@typescript-eslint/parser@8.0.0-alpha.51(eslint@9.7.0)(typescript@5.5.4))(eslint@9.7.0)(typescript@5.5.4)':
     dependencies:
       '@eslint-community/regexpp': 4.11.0
@@ -2235,6 +2260,15 @@ snapshots:
   detect-indent@6.1.0: {}
 
   devalue@5.0.0: {}
+
+  dexie-observable@4.0.1-beta.13(dexie@4.0.8):
+    dependencies:
+      dexie: 4.0.8
+
+  dexie-syncable@4.0.1-beta.13(dexie-observable@4.0.1-beta.13(dexie@4.0.8))(dexie@4.0.8):
+    dependencies:
+      dexie: 4.0.8
+      dexie-observable: 4.0.1-beta.13(dexie@4.0.8)
 
   dexie@4.0.8: {}
 

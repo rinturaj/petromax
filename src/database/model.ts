@@ -19,7 +19,7 @@ export interface Nosil {
 	type: string;
 }
 export interface Staff {
-	id: number;
+	id?: number;
 	name: string;
 	hourlyPrice: number;
 	createdOn: Date;

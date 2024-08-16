@@ -29,9 +29,9 @@
 			>
 		</div>
 	</div>
-	<Card.Root class="w-100">
-		<Card.Content>
-			<slot></slot>
-		</Card.Content>
-	</Card.Root>
+	<!-- <Card.Root class="w-100">
+		<Card.Content> -->
+	<slot></slot>
+	<!-- </Card.Content>
+	</Card.Root> -->
 </div>

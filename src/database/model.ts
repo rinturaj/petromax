@@ -27,7 +27,7 @@ export interface Staff {
 }
 
 export interface Stock {
-	id: number;
+	id?: number;
 	openingStock: number;
 	dipStock: number;
 	closingStock: number;

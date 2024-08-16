@@ -11,8 +11,8 @@
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
-	let onDelete = false;
 
+	let onDelete = false;
 	let deleteStaff: Staff;
 	$: staffList = liveQuery(async () => {
 		return await db.staff.toArray();

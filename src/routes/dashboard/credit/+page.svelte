@@ -41,10 +41,16 @@
 	});
 
 	$: totalCredit = $creditList
-		? $creditList.filter((x) => x?.type === 'Credit').reduce((sum, x) => sum + (x?.amount || 0), 0)
+		? $creditList
+				.filter((x) => x?.type === 'Credit')
+				.map((x) => x.amount || 0)
+				.reduce((sum, x) => (-x - sum) * -1, 0)
 		: 0;
 	$: totalSettled = $creditList
-		? $creditList.filter((x) => x?.type !== 'Credit').reduce((sum, x) => sum + (x?.amount || 0), 0)
+		? $creditList
+				.filter((x) => x?.type !== 'Credit')
+				.map((x: CreditModel) => x.amount || 0)
+				.reduce((sum: number, x: number) => (-x - sum) * -1, 0)
 		: 0;
 
 	const df = new DateFormatter('en-US', {

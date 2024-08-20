@@ -5,6 +5,25 @@ export interface UserAccount {
 	password: string;
 }
 
+export interface CreditModel {
+	id?: number;
+	vehicle: string;
+	phoneNumber: string;
+	amount: number;
+	note: string;
+	name: string;
+	type: string;
+	createdOn: Date;
+}
+
+export interface Expenses {
+	id?: number;
+	title: string;
+	note: string;
+	amount: number;
+	createdOn: Date;
+}
+
 export interface Price {
 	id: number;
 	petrol: number;

@@ -160,7 +160,7 @@
 									<Table.Head class="hidden sm:table-cell">Vehicle Number</Table.Head>
 									<Table.Head class="">Type</Table.Head>
 									<Table.Head class="">Amount</Table.Head>
-									<Table.Head class="text-right">Amount</Table.Head>
+									<Table.Head class="text-right"></Table.Head>
 								</Table.Row>
 							</Table.Header>
 							<Table.Body>

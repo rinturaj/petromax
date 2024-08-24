@@ -13,6 +13,7 @@
 	import { Reading, SaleOrder, type Readings, type SaleModel } from '../../../database/model';
 	import { format } from 'date-fns';
 	import { Trash2 } from 'lucide-svelte';
+	import { toast } from 'svelte-sonner';
 	import type { Selected } from 'bits-ui';
 
 	let sale: SaleModel = new SaleOrder();
@@ -76,6 +77,10 @@
 		sale.salesDate = selectedDate;
 	}
 	function addReading() {
+		if (Number(reading.closingReadings) < Number(reading.openingReadings)) {
+			toast.error('Closing reading should be less than opening');
+			return;
+		}
 		sale.readings.push(reading.build());
 		sale.actuals = sale.readings.reduce((pv, cv) => cv.totalPrice + pv, 0);
 		reading = new Reading();

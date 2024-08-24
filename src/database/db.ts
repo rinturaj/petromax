@@ -1,5 +1,14 @@
 import Dexie, { type EntityTable } from 'dexie';
-import type { CreditModel, Expenses, Nosil, Price, Staff, Stock, UserAccount } from './model';
+import type {
+	CreditModel,
+	Expenses,
+	Nosil,
+	Price,
+	SaleModel,
+	Staff,
+	Stock,
+	UserAccount
+} from './model';
 import { browser } from '$app/environment';
 import 'dexie-observable';
 
@@ -11,6 +20,7 @@ const db = new Dexie('petromax') as Dexie & {
 	stock: EntityTable<Stock, 'id'>;
 	expenses: EntityTable<Expenses, 'id'>;
 	credit: EntityTable<CreditModel, 'id'>;
+	sales: EntityTable<SaleModel, 'id'>;
 };
 
 // Schema declaration:
@@ -20,6 +30,7 @@ db.version(1).stores({
 	price: '++id, petrol,deisel',
 	nosil: '++id, type, name,[type+name]',
 	stock: '++id, stockDate, type,[stockDate+type]',
+	sales: '++id, salesDate, employeeName,[salesDate+employeeName]',
 	expenses: '++id, title, createdOn',
 	credit: '++id, vehicle, phoneNumber,[vehicle+type],createdOn'
 });

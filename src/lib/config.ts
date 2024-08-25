@@ -1,4 +1,4 @@
-import { Box, DollarSign, icons, type Icon } from 'lucide-svelte';
+import { Box, CreditCard, DollarSign, icons, UtilityPole, type Icon } from 'lucide-svelte';
 import type { ComponentType } from 'svelte';
 import * as Icons from './icons';
 import { Boxes } from 'lucide-svelte';
@@ -28,6 +28,13 @@ export const salesRoutes: Route[] = [
 		link: base + '/dashboard/expenses',
 		icon: DollarSign,
 		variant: 'ghost'
+	},
+	{
+		title: 'Credit ',
+		label: '',
+		link: base + '/dashboard/credit',
+		icon: CreditCard,
+		variant: 'ghost'
 	}
 ];
 export const primaryRoutes: Route[] = [
@@ -56,9 +63,16 @@ export const primaryRoutes: Route[] = [
 	},
 	{
 		title: 'Nosil',
-		label: '23',
+		label: '',
 		link: base + '/dashboard/nosil',
 		icon: Fuel,
+		variant: 'ghost'
+	},
+	{
+		title: 'Miscellaneous',
+		label: '',
+		link: base + '/dashboard/misc',
+		icon: UtilityPole,
 		variant: 'ghost'
 	}
 ];

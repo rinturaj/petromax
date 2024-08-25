@@ -189,8 +189,16 @@
 									{/each}
 								{:else}
 									<Table.Row>
-										<Table.Cell colspan={8} class="mt-4 pt-4 text-center font-medium"
-											>No Credit data available for the selected period
+										<Table.Cell colspan={4} class="mt-4 pt-4 text-center font-medium">
+											<div class="flex flex-col items-center">
+												<div class="text-2xl font-bold text-gray-700">
+													No Expenses Data Available
+												</div>
+												<p class="mt-2 text-gray-500">
+													Please add some Expenses data to get started.
+												</p>
+												<Button class="mt-3" on:click={() => add()}>Add New Expenses</Button>
+											</div>
 										</Table.Cell>
 									</Table.Row>
 								{/if}
@@ -220,7 +228,7 @@
 			>
 			<AlertDialog.Action
 				on:click={() => {
-					db.credit.delete(deleteExp.id);
+					db.expenses.delete(deleteExp.id);
 					onDelete = false;
 				}}>Continue</AlertDialog.Action
 			>

@@ -16,7 +16,13 @@
 	import { toast } from 'svelte-sonner';
 	import type { Selected } from 'bits-ui';
 
+	export let data: SaleModel;
 	let sale: SaleModel = new SaleOrder();
+
+	$: if (!!data) {
+		console.log(data);
+		sale = data;
+	}
 
 	let selectedNosil: Selected<any> = {
 		label: '',
@@ -429,7 +435,26 @@
 					!!sale.checkIn &&
 					!!sale.checkOut &&
 					sale.employeeId > 0
-				)}>Submit</Button
+				)}
+				on:click={() => {
+					if (sale.employeeId <= 0) {
+						toast.error(' employee details is not available');
+						return;
+					}
+
+					if (sale.readings.length <= 0) {
+						toast.error(' Reading should not be empty');
+						return;
+					}
+
+					if (sale.id == 0) delete sale.id;
+					console.log(sale);
+					if (sale.id == undefined) db.sales.add(sale);
+					else db.sales.update(sale.id, { ...sale });
+
+					componentSide.set(null);
+					toast.success('Stock  added successfully');
+				}}>Submit</Button
 			>
 		</div>
 	</Card.Footer>

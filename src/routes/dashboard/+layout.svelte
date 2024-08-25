@@ -6,7 +6,7 @@
 	import AccountSwitcher from '../../lib/components/custom/account-switcher.svelte';
 	import { cn } from '../../lib/utils';
 	import ScrollArea from '../../lib/components/ui/scroll-area/scroll-area.svelte';
-	import { componentSide, isAuthenticated, logout } from '../../lib/component.store';
+	import { componentData, componentSide, isAuthenticated, logout } from '../../lib/component.store';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import Button from '../../lib/components/ui/button/button.svelte';
 	import { onMount } from 'svelte';
@@ -174,6 +174,6 @@
 
 <Dialog.Root open={$componentSide != null}>
 	<Dialog.Content class="max-w-5xl p-0">
-		<svelte:component this={$componentSide} />
+		<svelte:component this={$componentSide} data={$componentData} />
 	</Dialog.Content>
 </Dialog.Root>

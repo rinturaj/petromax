@@ -93,7 +93,7 @@ export class Reading implements Readings {
 }
 
 export interface SaleModel {
-	id: number;
+	id?: number;
 
 	salesDate: Date;
 	createdOn: Date;
@@ -126,7 +126,7 @@ export interface SaleModel {
 }
 
 export class SaleOrder implements SaleModel {
-	id: number = 0;
+	id?: number = 0;
 	salesDate: Date = new Date();
 	createdOn: Date = new Date();
 	petrolPrice: number = 0;

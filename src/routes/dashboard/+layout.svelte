@@ -45,39 +45,43 @@
 		isCollapsed = false;
 		document.cookie = `PaneForge:collapsed=${false}`;
 	}
-
+	(window as any).electron.onSyncDatabaseResponse((response: any) => {
+		console.log(response);
+	});
 	async function syncDatabase() {
-		const status = await isStoragePersisted();
-		console.log(status);
+		(window as any).electron.syncDatabase('Requesting database sync...');
 
-		const inboxBucket = await (navigator as any).storageBuckets.open('petromax');
-		console.log(inboxBucket);
+		// const status = await isStoragePersisted();
+		// console.log(status);
 
-		let idb = await inboxBucket.indexedDB.open('petromax');
-		console.log(idb);
+		// const inboxBucket = await (navigator as any).storageBuckets.open('petromax');
+		// console.log(inboxBucket);
 
-		// idb.add()
-		if (!status) {
-			await persist();
-			console.log('Make storage persistent now?', console.log('denied'), true);
-		}
+		// let idb = await inboxBucket.indexedDB.open('petromax');
+		// console.log(idb);
 
-		if (navigator.storage && navigator.storage.persist) {
-			const isPersisted = await navigator.storage.persist();
-			console.log(`Persisted storage granted: ${isPersisted}`);
-		}
+		// // idb.add()
+		// if (!status) {
+		// 	await persist();
+		// 	console.log('Make storage persistent now?', console.log('denied'), true);
+		// }
 
-		let dirHandle = await navigator.storage.getDirectory();
-		const handle = await dirHandle.getFileHandle('sync_data.json', { create: true });
-		console.log(handle);
+		// if (navigator.storage && navigator.storage.persist) {
+		// 	const isPersisted = await navigator.storage.persist();
+		// 	console.log(`Persisted storage granted: ${isPersisted}`);
+		// }
 
-		await handle.requestPermission({ mode: 'readwrite', writable: true });
-		const writable = await handle.createWritable({
-			keepExistingData: false
-		});
-		await writable.write(JSON.stringify(await db.price.toArray()));
-		await writable.close();
-		console.log(await handle.getFile());
+		// let dirHandle = await navigator.storage.getDirectory();
+		// const handle = await dirHandle.getFileHandle('sync_data.json', { create: true });
+		// console.log(handle);
+
+		// await handle.requestPermission({ mode: 'readwrite', writable: true });
+		// const writable = await handle.createWritable({
+		// 	keepExistingData: false
+		// });
+		// await writable.write(JSON.stringify(await db.price.toArray()));
+		// await writable.close();
+		// console.log(await handle.getFile());
 	}
 </script>
 

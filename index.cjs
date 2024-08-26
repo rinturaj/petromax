@@ -22,6 +22,7 @@ function createWindow() {
 	mainWindow.webContents.openDevTools();
 	mainWindow.on('closed', () => {
 		mainWindow = null;
+		app.quit();
 	});
 
 	mainWindow.loadURL('http://localhost:5173/');
@@ -46,7 +47,8 @@ ipcMain.on('sync-database', async (event, arg) => {
 	// Handle the sync database request
 	console.log(arg); // Log the argument received from Svelte
 	// Perform database sync logic here
-	const desktopPath = app.getPath('desktop');
+	const desktopPath = app.getPath('documents');
+
 	console.log('Desktop Path:', desktopPath);
 
 	event.reply('sync-database-response', 'Database synced successfully!');

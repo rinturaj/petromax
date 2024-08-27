@@ -1,5 +1,6 @@
 const { app, BrowserWindow, contextBridge, ipcMain, ipcRenderer } = require('electron');
 const path = require('node:path'); // Change this line
+const { FSDB } = require('file-system-db');
 
 let mainWindow;
 
@@ -42,14 +43,33 @@ app.on('activate', () => {
 	}
 });
 
+// sync the indexDb with file system
+
 // IPC listener
-ipcMain.on('sync-database', async (event, arg) => {
-	// Handle the sync database request
-	console.log(arg); // Log the argument received from Svelte
-	// Perform database sync logic here
-	const desktopPath = app.getPath('documents');
+ipcMain.on('sync-database', (event, arg) => {
+	// console.log(arg); // Log the argument received from Svelte
+	try {
+		const desktopPath = app.getPath('documents');
+		arg.forEach((change) => {
+			const db = new FSDB(`${desktopPath}/petromax/${change.table}.json`, false);
+			switch (change.type) {
+				case 1: // CREATED
+					db.set(`${change.table}-${change.key}`, change.obj);
+					break;
+				case 2: // UPDATED
+					db.set(`${change.table}-${change.key}`, change.mods);
+					break;
+				case 3: // DELETED
+					db.delete(`${change.table}-${change.key}`);
+					break;
+			}
+		});
+	} catch (error) {
+		console.error('Error occurred:', error);
+	}
 
-	console.log('Desktop Path:', desktopPath);
-
-	event.reply('sync-database-response', 'Database synced successfully!');
+	event.reply('sync-database-response', {
+		status: 'Synced ✅',
+		time: new Date()
+	});
 });

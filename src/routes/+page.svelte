@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { base } from '$app/paths';
+
 	import Button from '../lib/components/ui/button/button.svelte';
 	import { db } from '../database/db';
 	import { onMount } from 'svelte';
@@ -12,6 +13,7 @@
 	import { Beaker } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import { login } from '../lib/component.store';
+	// import { ipcRenderer } from 'electron';
 
 	onMount(async () => {
 		db.userAccount.add({
@@ -27,7 +29,7 @@
 </script>
 
 <div
-	class="container relative hidden h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0"
+	class="container relative hidden h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0"
 >
 	<div class="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
 		<div
@@ -61,6 +63,8 @@
 					)}
 					on:click={async () => {
 						console.log('clicked');
+						// ipcRenderer.send('ping-good', 'ping');
+
 						let logged = await LoginApi.login(email, password);
 						if (logged) {
 							goto(base + '/dashboard/sales');

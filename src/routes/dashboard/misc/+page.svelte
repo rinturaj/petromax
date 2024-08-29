@@ -6,6 +6,9 @@
 	import { db } from '../../../database/db';
 	import Button from '../../../lib/components/ui/button/button.svelte';
 	import { PriceApi } from '../../../database/dbactivity';
+	import { Trash } from 'svelte-radix';
+	import { DataImport } from '../../../lib/DataImport';
+	import { CheckCheck, Loader } from 'lucide-svelte';
 
 	$: price = liveQuery(async () => {
 		let p = await db.price.get(1);
@@ -17,48 +20,43 @@
 	let addPrice = () => {
 		PriceApi.add(petrol, diesel);
 	};
+	function deleteFile(index: number) {
+		fileToImport.splice(index, 1);
+		fileToImport = fileToImport;
+	}
+
+	let fileToImport: { file: File; progress: number; status: boolean }[] = [];
+
+	function importFile() {
+		fileToImport.forEach(async (x) => {
+			x.progress = await DataImport.import(x.file);
+			x.status = true;
+			fileToImport = fileToImport;
+		});
+	}
 	async function getNewFileHandle() {
-		const options: SaveFilePickerOptions = {
+		const options: OpenFilePickerOptions = {
+			multiple: true, // Allow multiple file selection
 			types: [
 				{
-					description: 'Text Files',
+					description: 'Josn Files',
 					accept: {
-						'text/plain': ['.txt']
+						'text/plain': ['.json']
 					}
 				}
 			]
 		};
-		const [handle] = await window.showOpenFilePicker(options);
-		localStorage.setItem('sync_file_handle', handle.name);
-		await handle.requestPermission({ mode: 'readwrite', writable: true });
-		const writable = await handle.createWritable({
-			keepExistingData: false
-		});
-		await writable.write(JSON.stringify(await db.price.toArray()));
-		await writable.close();
-		console.log(await handle.getFile());
-
-		return handle;
-	}
-
-	async function verifyPermission(
-		fileHandle: { queryPermission: (arg0: {}) => any; requestPermission: (arg0: {}) => any },
-		readWrite: any
-	) {
-		const options: any = {};
-		if (readWrite) {
-			options.mode = 'readwrite';
+		const handle = await window.showOpenFilePicker(options);
+		for await (const entry of handle.values()) {
+			if (entry.kind === 'file') {
+				fileToImport.push({
+					file: await entry.getFile(),
+					progress: 0,
+					status: false
+				});
+				fileToImport = fileToImport;
+			}
 		}
-		// Check if permission was already granted. If so, return true.
-		if ((await fileHandle.queryPermission(options)) === 'granted') {
-			return true;
-		}
-		// Request permission. If the user grants permission, return true.
-		if ((await fileHandle.requestPermission(options)) === 'granted') {
-			return true;
-		}
-		// The user didn't grant permission, so return false.
-		return false;
 	}
 </script>
 
@@ -96,14 +94,44 @@
 			</Card.Root>
 			<Card.Root class="sm:col-span-4">
 				<Card.Header class="pb-3">
-					<Card.Title>Sync Your Database</Card.Title>
+					<Card.Title>Import Data</Card.Title>
 					<Card.Description class=" text-balance leading-relaxed">
-						Select a folder to store your database backup. This backup file can be used to restore
-						your data to IndexedDB in case of data loss in the browser.
+						Import your data from the JSON file into this application
+
+						<ul>
+							<ul class="space-y-2">
+								{#each fileToImport as file, index}
+									<li class="card flex items-center justify-between rounded-lg border bg-muted p-3">
+										<span class="font-extrabold">{file.file.name}</span>
+
+										<div class="flex items-center">
+											{#if !file.status}
+												<Button
+													on:click={() => deleteFile(index)}
+													type="button"
+													variant="destructive"
+													size="sm"
+												>
+													<Trash></Trash>
+												</Button>
+											{:else if file.progress < 100 && file.status == true}
+												<span>
+													<Loader class="animate-spin"></Loader>
+												</span>
+											{:else if file.progress == 100 && file.status == true}
+												<CheckCheck class="text-green-800" />
+											{/if}
+										</div>
+									</li>
+									<!-- Display each file name with delete button and progress bar -->
+								{/each}
+							</ul>
+						</ul>
 					</Card.Description>
 				</Card.Header>
 				<Card.Footer>
-					<Button on:click={getNewFileHandle}>Sync with local file</Button>
+					<Button class="mx-2" on:click={getNewFileHandle}>Load Files</Button>
+					<Button disabled={fileToImport.length <= 0} on:click={importFile}>Import</Button>
 				</Card.Footer>
 			</Card.Root>
 		</div>

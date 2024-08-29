@@ -45,7 +45,7 @@
 		isCollapsed = false;
 		document.cookie = `PaneForge:collapsed=${false}`;
 	}
-	(window as any).electron.onSyncDatabaseResponse((response: any) => {
+	(window as any).electron?.onSyncDatabaseResponse((response: any) => {
 		console.log(response);
 	});
 	async function syncDatabase() {

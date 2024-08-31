@@ -26,7 +26,8 @@ function createWindow() {
 		app.quit();
 	});
 
-	mainWindow.loadURL('https://rinturaj.github.io/petromax/');
+	// mainWindow.loadURL('https://rinturaj.github.io/petromax/');
+	mainWindow.loadURL('http://localhost:5173/');
 }
 
 app.on('ready', createWindow);

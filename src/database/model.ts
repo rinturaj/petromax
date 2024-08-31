@@ -1,3 +1,5 @@
+import { toNumber } from '../lib/utils';
+
 export interface UserAccount {
 	id: number;
 	name: string;
@@ -85,9 +87,9 @@ export class Reading implements Readings {
 	constructor() {}
 
 	build() {
-		this.totalLitre = this.closingReadings - this.openingReadings;
-		this.grossTotalLitre = this.totalLitre - this.testLiter;
-		this.totalPrice = this.totalLitre * this.unitPrice;
+		this.totalLitre = toNumber(this.closingReadings - this.openingReadings);
+		this.grossTotalLitre = toNumber(this.totalLitre - this.testLiter);
+		this.totalPrice = toNumber(this.grossTotalLitre * this.unitPrice);
 		return this;
 	}
 }

@@ -15,6 +15,7 @@
 	import { Trash2 } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import type { Selected } from 'bits-ui';
+	import { toNumber } from '../../utils';
 
 	export let data: SaleModel;
 	let sale: SaleModel = new SaleOrder();
@@ -49,13 +50,13 @@
 		sale.credit > 0
 	) {
 		sale.totalCollection =
-			Number(sale.byCash) +
-			Number(sale.upiPayment) +
-			Number(sale.hpPay) +
-			Number(sale.card) +
-			Number(sale.credit);
-		sale.inHand = sale.totalCollection - Number(sale.credit);
-		sale.discrepancy = sale.totalCollection - sale.actuals;
+			toNumber(sale.byCash) +
+			toNumber(sale.upiPayment) +
+			toNumber(sale.hpPay) +
+			toNumber(sale.card) +
+			toNumber(sale.credit);
+		sale.inHand = toNumber(sale.totalCollection) - toNumber(sale.credit);
+		sale.discrepancy = toNumber(sale.totalCollection - sale.actuals);
 		sale = sale;
 	}
 	let reading: Readings = new Reading();
@@ -323,7 +324,7 @@
 					</div>
 					<div class="text-right">
 						<h6 class=" text-xs text-muted-foreground">
-							Total (A-B) {rd.grossTotalLitre}L
+							Total (A-B) {rd.grossTotalLitre}L x <span class="currency">{rd.unitPrice}</span>
 						</h6>
 						<h6 class="currency text-sm font-semibold text-green-600">{rd.totalPrice}</h6>
 					</div>
@@ -394,19 +395,19 @@
 		<div class="grid grid-cols-5 gap-2">
 			<div class="grid">
 				<h6 class=" text-xs text-muted-foreground">System Calculated Amount</h6>
-				<h6 class="currency text-sm font-semibold">{sale.actuals}</h6>
+				<h6 class="currency text-sm font-semibold">{toNumber(sale.actuals)}</h6>
 			</div>
 			<div class="grid">
 				<h6 class=" text-xs text-muted-foreground">Total Collection</h6>
-				<h6 class="currency text-sm font-semibold">{sale.totalCollection}</h6>
+				<h6 class="currency text-sm font-semibold">{toNumber(sale.totalCollection)}</h6>
 			</div>
 			<div class="grid">
 				<h6 class=" text-xs text-muted-foreground">In Hand</h6>
-				<h6 class="currency text-sm font-semibold">{sale.inHand}</h6>
+				<h6 class="currency text-sm font-semibold">{toNumber(sale.inHand)}</h6>
 			</div>
 			<div class="grid">
 				<h6 class=" text-xs text-muted-foreground">Credit</h6>
-				<h6 class="currency text-sm font-semibold">{sale.credit}</h6>
+				<h6 class="currency text-sm font-semibold">{toNumber(sale.credit)}</h6>
 			</div>
 			<div class="grid">
 				<h6 class=" text-xs text-muted-foreground">Difference</h6>
@@ -453,7 +454,7 @@
 					else db.sales.update(sale.id, { ...sale });
 
 					componentSide.set(null);
-					toast.success('Stock  added successfully');
+					toast.success('Sales  added successfully');
 				}}>Submit</Button
 			>
 		</div>

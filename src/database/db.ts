@@ -40,7 +40,7 @@ db.transaction('rw', db.price, function (price) {
 });
 
 db.on('changes', function (changes) {
-	(window as any).electron.syncDatabase(changes);
+	if ((window as any).electron) (window as any).electron.syncDatabase(changes);
 });
 
 export const persist = async () => {

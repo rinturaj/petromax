@@ -39,11 +39,7 @@
 	let value: DateValue = new CalendarDate(new Date().getFullYear(), new Date().getMonth() + 1, 1);
 
 	$: startDate = value.toDate(getLocalTimeZone());
-	$: endDate = new CalendarDate(
-		value.year,
-		value.month,
-		value.calendar.getDaysInMonth(value)
-	).toDate(getLocalTimeZone());
+	$: endDate = new CalendarDate(value.year, value.month + 1, 1).toDate(getLocalTimeZone());
 </script>
 
 <Card.Root class="w-100">

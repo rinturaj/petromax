@@ -6,12 +6,12 @@ let mainWindow;
 
 function createWindow() {
 	mainWindow = new BrowserWindow({
-		width: 800,
-		height: 600,
-		alwaysOnTop: true,
+		width: 1366,
+		height: 768,
+		alwaysOnTop: false,
 		autoHideMenuBar: false,
 		frame: true,
-		fullscreen: true,
+		fullscreen: false,
 		webPreferences: {
 			contextIsolation: true,
 			enableRemoteModule: false,
@@ -20,12 +20,13 @@ function createWindow() {
 	});
 
 	// Open the DevTools.
-	mainWindow.webContents.openDevTools();
+	// mainWindow.webContents.openDevTools();
 	mainWindow.on('closed', () => {
 		mainWindow = null;
 		app.quit();
 	});
 
+	// mainWindow.loadURL('https://rinturaj.github.io/petromax/');
 	mainWindow.loadURL('http://localhost:5173/');
 }
 

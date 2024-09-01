@@ -81,7 +81,12 @@
 	function handleDateChange(event: Event) {
 		const input = event.target as HTMLInputElement;
 		const selectedDate = new Date(input.value);
-		sale.salesDate = selectedDate;
+		console.log(isNaN(selectedDate.getTime()));
+
+		if (!isNaN(selectedDate.getTime())) {
+			sale.salesDate = selectedDate;
+		}
+		console.log(sale.salesDate, selectedDate);
 	}
 	function addReading() {
 		if (Number(reading.closingReadings) < Number(reading.openingReadings)) {

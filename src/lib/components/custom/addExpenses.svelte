@@ -27,7 +27,9 @@
 	function handleDateChange(event: Event) {
 		const input = event.target as HTMLInputElement;
 		const createdOn = new Date(input.value);
-		newData.createdOn = createdOn;
+		if (!isNaN(createdOn.getTime())) {
+			newData.createdOn = createdOn;
+		}
 	}
 </script>
 

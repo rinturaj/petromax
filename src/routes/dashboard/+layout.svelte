@@ -176,7 +176,7 @@
 	</Resizable.PaneGroup>
 </div>
 
-<Dialog.Root open={$componentSide != null}>
+<Dialog.Root open={$componentSide != null} closeOnOutsideClick={false} closeOnEscape={false}>
 	<Dialog.Content class="max-w-5xl p-0">
 		<svelte:component this={$componentSide} data={$componentData} />
 	</Dialog.Content>

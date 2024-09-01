@@ -26,7 +26,9 @@
 	function handleDateChange(event: Event) {
 		const input = event.target as HTMLInputElement;
 		const selectedDate = new Date(input.value);
-		newData.stockDate = selectedDate;
+		if (!isNaN(selectedDate.getTime())) {
+			newData.stockDate = selectedDate;
+		}
 		getLastDateStock();
 	}
 

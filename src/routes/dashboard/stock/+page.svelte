@@ -101,8 +101,8 @@
 							<Table.Cell>{stock.openingStock}</Table.Cell>
 							<Table.Cell>{stock.dipStock}</Table.Cell>
 							<Table.Cell>{stock.closingStock}</Table.Cell>
-							<Table.Cell></Table.Cell>
-							<Table.Cell>{stock.closingStock - 10}</Table.Cell>
+							<Table.Cell>0</Table.Cell>
+							<Table.Cell>0</Table.Cell>
 							<Table.Cell>
 								<div class="flex items-center justify-end space-x-2">
 									<Button

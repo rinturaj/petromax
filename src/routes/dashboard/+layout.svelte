@@ -13,6 +13,7 @@
 	import { goto } from '$app/navigation';
 	import { FolderSync, LogOut } from 'lucide-svelte';
 	import { db, isStoragePersisted, persist } from '../../database/db';
+	import { base } from '$app/paths';
 
 	export let defaultLayout = [265, 655, 340];
 	export let defaultCollapsed = false;
@@ -132,7 +133,7 @@
 							<Button
 								on:click={() => {
 									logout();
-									goto('/');
+									goto({ base } + '/');
 								}}
 								variant="outline"
 								size="icon"><LogOut></LogOut></Button
@@ -141,26 +142,13 @@
 							<Button
 								on:click={() => {
 									logout();
-									goto('/');
+									goto({ base } + '/');
 								}}
 								class="w-full"
 								variant="outline"
 								size="sm"
 							>
 								<LogOut class="mr-2" size={14}></LogOut>Logout</Button
-							>
-						{/if}
-					</div>
-					<Separator />
-					<div class="p-2 text-center">
-						{#if isCollapsed}
-							<Button on:click={syncDatabase} variant="outline" size="icon">
-								<FolderSync></FolderSync>
-							</Button>
-						{:else}
-							<Button on:click={syncDatabase} class="w-full" variant="outline" size="sm">
-								<FolderSync class="mr-2" size={14}></FolderSync>
-								DB Sync</Button
 							>
 						{/if}
 					</div>

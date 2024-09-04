@@ -18,6 +18,14 @@ export interface CreditModel {
 	createdOn: Date;
 }
 
+export interface Oil {
+	id?: number;
+	name: string;
+	size: string;
+	quantity: number;
+	unitPrice: number;
+	createdOn: Date;
+}
 export interface Expenses {
 	id?: number;
 	title: string;
@@ -36,7 +44,7 @@ export interface Price {
 export interface Nosil {
 	id?: number;
 	name: string;
-	details: string;
+	reading: number;
 	type: string;
 }
 export interface Staff {

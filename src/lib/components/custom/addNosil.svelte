@@ -10,7 +10,7 @@
 	import { db } from '../../../database/db';
 
 	let newData: Nosil = {
-		details: '',
+		reading: 0,
 		name: '',
 		type: ''
 	};
@@ -57,10 +57,10 @@
 						</Select.Group>
 					</Select.Content>
 				</Select.Root>
-				<div class="grid gap-3">
-					<Label for="description">Description</Label>
-					<Textarea id="description" bind:value={newData.details} class="min-h-32" />
-				</div>
+			</div>
+			<div class="grid gap-3">
+				<Label for="description">Current Reading</Label>
+				<Input id="description" bind:value={newData.reading} />
 			</div>
 		</div></Card.Content
 	>

@@ -10,7 +10,13 @@
 	import ScrollArea from '../ui/scroll-area/scroll-area.svelte';
 	import { db } from '../../../database/db';
 	import { liveQuery } from 'dexie';
-	import { Reading, SaleOrder, type Readings, type SaleModel } from '../../../database/model';
+	import {
+		Reading,
+		SaleOrder,
+		type Nosil,
+		type Readings,
+		type SaleModel
+	} from '../../../database/model';
 	import { format } from 'date-fns';
 	import { Trash2 } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
@@ -88,11 +94,20 @@
 		}
 		console.log(sale.salesDate, selectedDate);
 	}
-	function addReading() {
+	async function addReading() {
 		if (Number(reading.closingReadings) < Number(reading.openingReadings)) {
 			toast.error('Closing reading should be less than opening');
 			return;
 		}
+
+		const ns = $nosilList.find((x) => x.name === reading.nosil);
+		console.log(ns);
+
+		if (ns != null) {
+			ns.reading = reading.closingReadings;
+			await db.nosil.update(ns.id, { ...ns });
+		}
+
 		sale.readings.push(reading.build());
 		sale.actuals = sale.readings.reduce((pv, cv) => cv.totalPrice + pv, 0);
 		reading = new Reading();
@@ -103,12 +118,25 @@
 		sale = sale;
 	}
 
-	function deleteReading(rd: Readings): void {
+	async function deleteReading(rd: Readings) {
 		// Remove the reading from the sale's readings array
 		sale.readings = sale.readings.filter((r) => r !== rd);
 		// Recalculate the actuals after deletion
 		sale.actuals = sale.readings.reduce((pv, cv) => cv.totalPrice + pv, 0);
 		sale = sale;
+
+		const ns = $nosilList.find((x) => x.name === rd.nosil);
+		console.log(ns);
+
+		if (ns != null) {
+			ns.reading = rd.openingReadings;
+			await db.nosil.update(ns.id, { ...ns });
+		}
+
+		selectedNosil = {
+			label: '',
+			value: ''
+		};
 	}
 </script>
 
@@ -235,6 +263,7 @@
 							if (ns) {
 								reading.nosil = ns?.name;
 								reading.type = ns?.type;
+								reading.openingReadings = ns.reading;
 								reading.unitPrice =
 									(reading.type == 'petrol' ? $price?.petrol : $price?.diesel) || 0;
 							}
@@ -428,6 +457,15 @@
 		<div>
 			<Button
 				on:click={() => {
+					sale.readings.reverse().forEach(async (readings) => {
+						const ns = $nosilList.find((x) => x.name === readings.nosil);
+						console.log(ns);
+						if (ns != null) {
+							ns.reading = readings.openingReadings;
+							await db.nosil.update(ns.id, { ...ns });
+						}
+					});
+
 					componentSide.set(null);
 				}}
 				variant="outline"

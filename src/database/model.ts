@@ -102,6 +102,67 @@ export class Reading implements Readings {
 	}
 }
 
+export interface OliSalesModel {
+	id?: number;
+
+	salesDate: Date;
+	createdOn: Date;
+
+	items: OilItem[];
+
+	employeeName: string;
+	employeeId: number;
+
+	//collection
+	byCash: number;
+	upiPayment: number;
+	card: number;
+	hpPay: number;
+	credit: number;
+
+	totalCollection: number;
+	inHand: number;
+	actuals: number;
+
+	discrepancy: number;
+}
+
+export class OliSalesModelClass implements OliSalesModel {
+	id?: number = undefined;
+	salesDate: Date = new Date();
+	createdOn: Date = new Date();
+	items: OilItem[] = [];
+	employeeName: string = '';
+	employeeId: number = 0;
+	byCash: number = 0;
+	upiPayment: number = 0;
+	card: number = 0;
+	hpPay: number = 0;
+	credit: number = 0;
+	totalCollection: number = 0;
+	inHand: number = 0;
+	actuals: number = 0;
+	discrepancy: number = 0;
+}
+export interface OilItem {
+	build(): OilItem;
+	name: string;
+	quantity: number;
+	unit: number;
+	unitPrice: number;
+	amount: number;
+}
+export class OilItemClass implements OilItem {
+	build(): OilItem {
+		this.amount = toNumber(this.quantity * this.unitPrice * this.unit);
+		return this;
+	}
+	name: string = '';
+	quantity: number = 0;
+	unit: number = 0;
+	unitPrice: number = 0;
+	amount: number = 0;
+}
 export interface SaleModel {
 	id?: number;
 

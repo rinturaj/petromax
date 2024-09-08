@@ -1,4 +1,4 @@
-import { Box, CreditCard, DollarSign, icons, UtilityPole, type Icon } from 'lucide-svelte';
+import { Box, CreditCard, DollarSign, Droplet, icons, UtilityPole, type Icon } from 'lucide-svelte';
 import type { ComponentType } from 'svelte';
 import * as Icons from './icons';
 import { Boxes } from 'lucide-svelte';
@@ -20,6 +20,13 @@ export const salesRoutes: Route[] = [
 		label: '',
 		link: base + '/dashboard/sales',
 		icon: Box,
+		variant: 'ghost'
+	},
+	{
+		title: 'Oil Sales',
+		label: '',
+		link: base + '/dashboard/oilsales',
+		icon: Droplet,
 		variant: 'ghost'
 	},
 	{

@@ -199,6 +199,7 @@
 					<div class="grid gap-3">
 						<Label for="name">Employee</Label>
 						<Select.Root
+							selected={{ value: sale.employeeId, label: sale.employeeName }}
 							onSelectedChange={(v) => {
 								const staff = $staffs.find((x) => x.id === v?.value);
 								if (staff) {

@@ -4,6 +4,7 @@ import type {
 	Expenses,
 	Nosil,
 	Oil,
+	OliSalesModel,
 	Price,
 	SaleModel,
 	Staff,
@@ -22,6 +23,7 @@ const db = new Dexie('petromax') as Dexie & {
 	expenses: EntityTable<Expenses, 'id'>;
 	credit: EntityTable<CreditModel, 'id'>;
 	sales: EntityTable<SaleModel, 'id'>;
+	oilsales: EntityTable<OliSalesModel, 'id'>;
 	oil: EntityTable<Oil, 'id'>;
 };
 
@@ -33,6 +35,7 @@ db.version(1).stores({
 	nosil: '++id, type, name,[type+name]',
 	stock: '++id, stockDate, type,[stockDate+type]',
 	sales: '++id, salesDate, employeeName,[salesDate+employeeName]',
+	oilsales: '++id, salesDate, employeeName,[salesDate+employeeName]',
 	expenses: '++id, title, createdOn',
 	credit: '++id, vehicle, phoneNumber,[vehicle+type],createdOn',
 	oil: '++id, name,size, unitPrice,createdOn'

@@ -20,7 +20,9 @@
 		{#each $nosilList as nosil (nosil.id)}
 			<Card.Root>
 				<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-					<Card.Title class="text-sm font-medium text-muted-foreground">Nosil</Card.Title>
+					<Card.Title class="text-sm font-medium text-muted-foreground"
+						>Current Reading: {nosil.reading || 0}</Card.Title
+					>
 					<Button
 						on:click={() => {
 							deleteNosil = nosil;
@@ -33,6 +35,7 @@
 				</Card.Header>
 				<Card.Content>
 					<div class="text-2xl font-bold">{nosil.name}</div>
+
 					<p class="text-xs uppercase text-muted-foreground">
 						<Badge class={nosil.type == 'petrol' ? 'bg-blue-500' : 'bg-green-500'}
 							>{nosil.type}</Badge

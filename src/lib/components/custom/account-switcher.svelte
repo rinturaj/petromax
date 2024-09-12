@@ -35,7 +35,7 @@
 	selected={{ value: selectedAccount.label, label: selectedAccount.label }}
 	onSelectedChange={(e) => {
 		selectedAccount = accounts.find((account) => account.label === e?.value) || accounts[0];
-		let url = `${base}/${selectedAccount.label == 'Sales' ? 'dashboard/sales' : 'dashboard/stock'}`;
+		let url = `${base}/${selectedAccount.label == 'Sales' ? 'dashboard/overview' : 'dashboard/stock'}`;
 		console.log(url);
 
 		goto(url);

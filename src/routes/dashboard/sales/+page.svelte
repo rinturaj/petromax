@@ -8,11 +8,22 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { componentData, componentSide } from '../../../lib/component.store';
 	import SaleOrder from '../../../lib/components/custom/saleOrder.svelte';
-	import { CalendarIcon, Edit, Expand } from 'lucide-svelte';
+	import {
+		CalendarIcon,
+		Activity,
+		Edit,
+		Expand,
+		File,
+		ListFilter,
+		ArrowUp,
+		ArrowDown
+	} from 'lucide-svelte';
 	import { Trash } from 'svelte-radix';
 	import { cn, toNumber } from '$lib/utils.js';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index';
+
 	import {
 		CalendarDate,
 		DateFormatter,
@@ -42,8 +53,17 @@
 
 	$: salesList = liveQuery(async () => {
 		console.log(startDate, endDate);
-
-		return await db.sales.where('salesDate').between(startDate, endDate, true, true).toArray();
+		if (sortDesc)
+			return await db.sales
+				.where('salesDate')
+				.between(startDate, endDate, true, true)
+				.reverse()
+				.sortBy(sortBy);
+		else
+			return await db.sales
+				.where('salesDate')
+				.between(startDate, endDate, true, true)
+				.sortBy(sortBy);
 	});
 
 	$: revenueMonth = $salesList
@@ -117,6 +137,8 @@
 	});
 
 	let dateValue: DateRange;
+	let sortBy: string = 'salesDate';
+	let sortDesc: boolean;
 
 	$: startDate =
 		dateValue != null && dateValue.start != null
@@ -162,7 +184,7 @@
 			</Card.Root>
 			<Card.Root>
 				<Card.Header class="pb-2">
-					<Card.Description>This Month</Card.Description>
+					<Card.Description>Selected Date Range</Card.Description>
 					<Card.Title class="currency text-3xl">{revenueMonth.collected}</Card.Title>
 				</Card.Header>
 				<Card.Content>
@@ -180,30 +202,92 @@
 				</Card.Footer>
 			</Card.Root>
 		</div>
-		<div class="flex items-center">
+
+		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+			<Card.Root>
+				<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+					<Card.Title class="text-sm font-medium">Total Revenue</Card.Title>
+					<!-- <DollarSign class="h-4 w-4 text-muted-foreground" /> -->
+				</Card.Header>
+				<Card.Content>
+					<div class="currency text-2xl font-bold">{revenueMonth.revenue}</div>
+				</Card.Content>
+			</Card.Root>
+			<Card.Root>
+				<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+					<Card.Title class="text-sm  font-medium">Collection</Card.Title>
+					<!-- <Users class="h-4 w-4 text-muted-foreground" /> -->
+				</Card.Header>
+				<Card.Content>
+					<div class="currency text-2xl font-bold">{revenueMonth.collected}</div>
+				</Card.Content>
+			</Card.Root>
+			<Card.Root>
+				<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+					<Card.Title class="text-sm font-medium">Credit</Card.Title>
+					<!-- <CreditCard class="h-4 w-4 text-muted-foreground" /> -->
+				</Card.Header>
+				<Card.Content>
+					<div class="currency text-2xl font-bold">{revenueMonth.credit}</div>
+				</Card.Content>
+			</Card.Root>
+			<Card.Root>
+				<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+					<Card.Title class="text-sm font-medium">Discrepancy</Card.Title>
+					<Activity class="h-4 w-4 text-muted-foreground" />
+				</Card.Header>
+				<Card.Content>
+					<div class="currency text-2xl font-bold">{revenueMonth.discrepancy}</div>
+				</Card.Content>
+			</Card.Root>
+		</div>
+		<!-- <div class="flex items-center">
 			<div></div>
-			<!-- <div class="ml-auto flex items-center gap-2">
+			<div class="ml-auto flex items-center gap-2">
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger asChild let:builder>
 						<Button variant="outline" size="sm" class="h-7 gap-1 text-sm" builders={[builder]}>
 							<ListFilter class="h-3.5 w-3.5" />
-							<span class="sr-only sm:not-sr-only">Filter</span>
+							<span class="sr-only sm:not-sr-only">Sort By</span>
 						</Button>
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content align="end">
-						<DropdownMenu.Label>Filter by</DropdownMenu.Label>
+						<DropdownMenu.Label>Sort by</DropdownMenu.Label>
 						<DropdownMenu.Separator />
-						<DropdownMenu.CheckboxItem checked>Fulfilled</DropdownMenu.CheckboxItem>
-						<DropdownMenu.CheckboxItem>Declined</DropdownMenu.CheckboxItem>
-						<DropdownMenu.CheckboxItem>Refunded</DropdownMenu.CheckboxItem>
+						<DropdownMenu.Item
+							on:click={() => {
+								sortBy = 'Name';
+								sortDesc = !sortDesc;
+							}}>Name</DropdownMenu.Item
+						>
+						<DropdownMenu.Item
+							on:click={() => {
+								sortBy = 'Date';
+								sortDesc = !sortDesc;
+							}}>Date</DropdownMenu.Item
+						>
+						<DropdownMenu.Item
+							on:click={() => {
+								sortBy = 'Collection';
+								sortDesc = !sortDesc;
+							}}
+						>
+							Collection</DropdownMenu.Item
+						>
+						<DropdownMenu.Item
+							on:click={() => {
+								sortBy = 'Discrepancy';
+								sortDesc = !sortDesc;
+							}}>Discrepancy</DropdownMenu.Item
+						>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
 				<Button size="sm" variant="outline" class="h-7 gap-1 text-sm">
 					<File class="h-3.5 w-3.5" />
 					<span class="sr-only sm:not-sr-only">Export</span>
 				</Button>
-			</div> -->
-		</div>
+			</div>
+		</div> -->
 		<Card.Root>
 			<Card.Header class="flex flex-row justify-between px-7">
 				<div>
@@ -224,26 +308,74 @@
 				<Table.Root>
 					<Table.Header>
 						<Table.Row>
-							<Table.Head>Name</Table.Head>
-							<Table.Head class="hidden sm:table-cell">Date</Table.Head>
-							<Table.Head class="hidden sm:table-cell">Shift Time</Table.Head>
-							<Table.Head class="hidden md:table-cell"
-								>Credit | <span class="currency font-light text-blue-500">
-									{revenueMonth.credit}</span
+							<Table.Head
+								><Button
+									on:click={() => {
+										sortBy = 'employeeName';
+										sortDesc = !sortDesc;
+									}}
+									variant="ghost"
 								>
+									{#if sortDesc && sortBy == 'employeeName'}
+										<ArrowUp size={13} />
+									{:else}
+										<ArrowDown size={13} />
+									{/if}
+									Name
+								</Button>
 							</Table.Head>
-							<Table.Head class="hidden md:table-cell"
-								>Collection | <span class="currency font-light text-blue-500">
-									{revenueMonth.collected}
-								</span></Table.Head
-							>
-							<Table.Head class="hidden md:table-cell"
-								>Total | <span class="currency font-light text-blue-500">
-									{revenueMonth.revenue}
-								</span></Table.Head
-							>
-							<Table.Head class="hidden md:table-cell">Discrepancy</Table.Head>
-							<Table.Head class="text-right">Action</Table.Head>
+							<Table.Head class="hidden sm:table-cell"
+								><Button
+									on:click={() => {
+										sortBy = 'salesDate';
+										sortDesc = !sortDesc;
+									}}
+									variant="ghost"
+								>
+									{#if sortDesc && sortBy == 'salesDate'}
+										<ArrowUp size={13} />
+									{:else}
+										<ArrowDown size={13} />
+									{/if}
+									Date
+								</Button>
+							</Table.Head>
+							<Table.Head class="hidden sm:table-cell">Shift Time</Table.Head>
+							<Table.Head class="hidden md:table-cell">Credit</Table.Head>
+							<Table.Head class=" hidden md:table-cell">
+								<Button
+									on:click={() => {
+										sortBy = 'totalCollection';
+										sortDesc = !sortDesc;
+									}}
+									variant="ghost"
+								>
+									{#if sortDesc && sortBy == 'totalCollection'}
+										<ArrowUp size={13} />
+									{:else}
+										<ArrowDown size={13} />
+									{/if}
+									Collection
+								</Button>
+							</Table.Head>
+							<Table.Head class="  md:table-cell">Total</Table.Head>
+							<Table.Head class="  md:table-cell">
+								<Button
+									on:click={() => {
+										sortBy = 'discrepancy';
+										sortDesc = !sortDesc;
+									}}
+									variant="ghost"
+								>
+									{#if sortDesc && sortBy == 'discrepancy'}
+										<ArrowUp size={13} />
+									{:else}
+										<ArrowDown size={13} />
+									{/if}
+									Discrepancy
+								</Button>
+							</Table.Head>
+							<Table.Head class="  text-right">Action</Table.Head>
 						</Table.Row>
 					</Table.Header>
 					<Table.Body>

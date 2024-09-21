@@ -4,6 +4,7 @@
 	import { PlusCircle } from 'lucide-svelte';
 	import Adduser from '../../../lib/components/custom/adduser.svelte';
 	import { componentSide } from '../../../lib/component.store';
+	import SalaryCalculation from '../../../lib/components/custom/salaryCalculation.svelte';
 
 	componentSide.set(null);
 

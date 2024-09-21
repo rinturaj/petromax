@@ -15,6 +15,7 @@
 		Expand,
 		File,
 		ListFilter,
+		Check,
 		ArrowUp,
 		ArrowDown
 	} from 'lucide-svelte';
@@ -57,15 +58,20 @@
 			return await db.sales
 				.where('salesDate')
 				.between(startDate, endDate, true, true)
+				.and((x) => (filterBy != '' ? x.employeeName == filterBy : true))
 				.reverse()
 				.sortBy(sortBy);
 		else
 			return await db.sales
 				.where('salesDate')
 				.between(startDate, endDate, true, true)
+				.and((x) => (filterBy != '' ? x.employeeName == filterBy : true))
 				.sortBy(sortBy);
 	});
 
+	$: nameList = liveQuery(async () => {
+		return [...new Set((await db.sales.toArray()).map((x) => x.employeeName))];
+	});
 	$: revenueMonth = $salesList
 		? $salesList.reduce(
 				(sum: any, x: SaleModel) => {
@@ -138,6 +144,8 @@
 
 	let dateValue: DateRange;
 	let sortBy: string = 'salesDate';
+	let filterBy: string = '';
+
 	let sortDesc: boolean;
 
 	$: startDate =
@@ -300,7 +308,35 @@
 						Selected Date Range Sales are shown. Choose earlier date for previous month's details.
 					</Card.Description>
 				</div>
-				<div>
+				<div class="flex">
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger asChild let:builder>
+							<Button variant="outline" class="mr-2  gap-1 " builders={[builder]}>
+								<ListFilter class="h-3.5 w-3.5" />
+								<span class="sr-only sm:not-sr-only">Filter</span>
+							</Button>
+						</DropdownMenu.Trigger>
+						<DropdownMenu.Content align="end">
+							<DropdownMenu.Label>Filter by Name</DropdownMenu.Label>
+							<DropdownMenu.Separator />
+							{#if !!$nameList && $nameList.length > 0}
+								{#each $nameList as name}
+									<DropdownMenu.Item
+										class={filterBy === name ? 'bg-lime-50' : ''}
+										on:click={() => {
+											filterBy = name == filterBy ? '' : name;
+										}}
+									>
+										{#if filterBy === name}
+											<Check />
+										{/if}
+
+										{name}</DropdownMenu.Item
+									>
+								{/each}
+							{/if}
+						</DropdownMenu.Content>
+					</DropdownMenu.Root>
 					<DatePickerWithRange bind:value={dateValue} />
 				</div>
 			</Card.Header>

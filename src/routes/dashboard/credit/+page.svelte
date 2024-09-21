@@ -24,10 +24,12 @@
 		type DateValue
 	} from '@internationalized/date';
 	import { cn } from '../../../lib/utils';
-	import { CalendarIcon, Trash2 } from 'lucide-svelte';
+	import { CalendarIcon, Trash2, Check } from 'lucide-svelte';
 	import Calendar from '../../../lib/components/ui/calendar/calendar.svelte';
 	import AddCredit from '../../../lib/components/custom/addCredit.svelte';
 	import { derived } from 'svelte/store';
+	import type { DateRange } from 'bits-ui';
+	import DatePickerWithRange from '../../../lib/components/custom/date-picker-with-range.svelte';
 
 	const add = () => {
 		componentSide.set(AddCredit);
@@ -37,7 +39,24 @@
 	let deleteCredit: CreditModel;
 
 	$: creditList = liveQuery(async () => {
-		return await db.credit.where('createdOn').between(startDate, endDate).toArray();
+		// return await db.credit.where('createdOn').between(startDate, endDate).toArray();
+
+		if (sortBy != '' && !!sortBy)
+			return await db.credit
+				.where('createdOn')
+				.between(startDate, endDate, true, true)
+				.and((x) => x.name == sortBy)
+				.reverse()
+				.sortBy(sortBy);
+		else
+			return await db.credit
+				.where('createdOn')
+				.between(startDate, endDate, true, true)
+				.sortBy(sortBy);
+	});
+
+	$: creditListName = liveQuery(async () => {
+		return [...new Set((await db.credit.toArray()).map((x) => x.name))];
 	});
 
 	$: totalCredit = $creditList
@@ -56,11 +75,18 @@
 	const df = new DateFormatter('en-US', {
 		dateStyle: 'long'
 	});
+	let dateValue: DateRange;
+	let sortBy: string = '';
+	let sortDesc: boolean = false;
 
-	let value: DateValue = new CalendarDate(new Date().getFullYear(), new Date().getMonth() + 1, 1);
-
-	$: startDate = value.toDate(getLocalTimeZone());
-	$: endDate = new CalendarDate(value.year, value.month + 1, 1).toDate(getLocalTimeZone());
+	$: startDate =
+		dateValue != null && dateValue.start != null
+			? dateValue.start?.toDate(getLocalTimeZone())
+			: new Date();
+	$: endDate =
+		dateValue != null && dateValue.end != null
+			? dateValue.end?.toDate(getLocalTimeZone())
+			: new Date();
 </script>
 
 <div class="flex min-h-screen w-full flex-col bg-muted/40 p-4">
@@ -68,11 +94,7 @@
 		<div class="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
 			<Card.Root class="sm:col-span-2">
 				<Card.Header class="pb-3">
-					<Card.Title
-						>Credit Details for {new Intl.DateTimeFormat('en-US', { month: 'long' }).format(
-							value.toDate(getLocalTimeZone())
-						)}</Card.Title
-					>
+					<Card.Title>Credit Details for selected date range</Card.Title>
 					<Card.Description class="max-w-lg text-balance leading-relaxed">
 						Current month's stock shown. Choose earlier date for previous month's details.
 					</Card.Description>
@@ -84,13 +106,9 @@
 			<Card.Root>
 				<Card.Header class="pb-2">
 					<Card.Description>This Month Settled</Card.Description>
-					{#if !!totalSettled}
-						<Card.Title class="currency text-4xl text-green-700">{totalSettled}</Card.Title>
-					{/if}
+					<Card.Title class="currency text-4xl text-green-700">{totalSettled || 0}</Card.Title>
 				</Card.Header>
-				<Card.Content>
-					<div class="text-xs text-muted-foreground">+25% from last week</div>
-				</Card.Content>
+				<Card.Content></Card.Content>
 			</Card.Root>
 			<Card.Root>
 				<Card.Header class="pb-2">
@@ -99,53 +117,57 @@
 						<Card.Title class="currency text-3xl text-red-600">{totalCredit}</Card.Title>
 					{/if}
 				</Card.Header>
-				<Card.Content>
-					<div class="text-xs text-muted-foreground">+10% from last month</div>
-				</Card.Content>
+				<Card.Content></Card.Content>
 			</Card.Root>
 		</div>
 		<Tabs.Root value="week">
-			<div class="flex items-center">
-				<div class="ml-auto flex items-center gap-2">
-					<!-- <DropdownMenu.Root>
-						<DropdownMenu.Trigger asChild let:builder>
-							<Button variant="outline" size="sm" class="h-7 gap-1 text-sm" builders={[builder]}>
-								<ListFilter class="h-3.5 w-3.5" />
-								<span class="sr-only sm:not-sr-only">Filter</span>
-							</Button>
-						</DropdownMenu.Trigger>
-						<DropdownMenu.Content align="end">
-							<DropdownMenu.Label>Filter by</DropdownMenu.Label>
-							<DropdownMenu.Separator />
-							<DropdownMenu.CheckboxItem checked>Fulfilled</DropdownMenu.CheckboxItem>
-							<DropdownMenu.CheckboxItem>Declined</DropdownMenu.CheckboxItem>
-							<DropdownMenu.CheckboxItem>Refunded</DropdownMenu.CheckboxItem>
-						</DropdownMenu.Content>
-					</DropdownMenu.Root> -->
-					<Popover.Root>
-						<Popover.Trigger asChild let:builder>
-							<Button
-								variant="outline"
-								class={cn(
-									'w-[240px] justify-start text-left font-normal',
-									!value && 'text-muted-foreground'
-								)}
-								builders={[builder]}
-							>
-								<CalendarIcon class="mr-2 h-4 w-4" />
-								{value ? df.format(value.toDate(getLocalTimeZone())) : 'Pick a date'}
-							</Button>
-						</Popover.Trigger>
-						<Popover.Content class="w-auto p-0" align="start">
-							<Calendar bind:value />
-						</Popover.Content>
-					</Popover.Root>
-				</div>
-			</div>
 			<Tabs.Content value="week">
 				<Card.Root>
-					<Card.Header class="px-7">
-						<Card.Title>Credit</Card.Title>
+					<Card.Header class="flex flex-row justify-between px-7">
+						<div>
+							<Card.Title
+								>Sale Details for {df.format(
+									dateValue?.start?.toDate(getLocalTimeZone()) ?? new Date()
+								)} - {df.format(
+									dateValue?.end?.toDate(getLocalTimeZone()) ?? new Date()
+								)}</Card.Title
+							>
+							<Card.Description>
+								Selected Date Range Sales are shown. Choose earlier date for previous month's
+								details.
+							</Card.Description>
+						</div>
+						<div class="flex">
+							<DropdownMenu.Root>
+								<DropdownMenu.Trigger asChild let:builder>
+									<Button variant="outline" class="mr-2  gap-1 " builders={[builder]}>
+										<ListFilter class="h-3.5 w-3.5" />
+										<span class="sr-only sm:not-sr-only">Filter</span>
+									</Button>
+								</DropdownMenu.Trigger>
+								<DropdownMenu.Content align="end">
+									<DropdownMenu.Label>Filter by Name</DropdownMenu.Label>
+									<DropdownMenu.Separator />
+									{#if !!$creditListName && $creditListName.length > 0}
+										{#each $creditListName as name}
+											<DropdownMenu.Item
+												class={sortBy === name ? 'bg-lime-50' : ''}
+												on:click={() => {
+													sortBy = name == sortBy ? '' : name;
+												}}
+											>
+												{#if sortBy === name}
+													<Check />
+												{/if}
+
+												{name}</DropdownMenu.Item
+											>
+										{/each}
+									{/if}
+								</DropdownMenu.Content>
+							</DropdownMenu.Root>
+							<DatePickerWithRange bind:value={dateValue} />
+						</div>
 					</Card.Header>
 					<Card.Content>
 						<Table.Root>
@@ -218,6 +240,29 @@
 							</Table.Body>
 						</Table.Root>
 					</Card.Content>
+					<Card.Footer class=" border bg-lime-50 pt-3 text-right">
+						<div class="grid w-full grid-cols-3 gap-2">
+							<div class="grid">
+								<h6 class=" text-xs text-muted-foreground">Credit</h6>
+								<h6 class="currency text-sm font-semibold">{totalCredit || 0}</h6>
+							</div>
+							<div class="grid">
+								<h6 class=" text-xs text-muted-foreground">Settled</h6>
+								<h6 class="currency text-sm font-semibold">{totalSettled || 0}</h6>
+							</div>
+
+							<div class="grid">
+								<h6 class=" text-xs text-muted-foreground">Balance</h6>
+								<h6
+									class="currency text-sm font-extrabold {totalCredit - totalSettled >= 0
+										? 'text-green-600'
+										: 'text-red-600'}"
+								>
+									{totalCredit - totalSettled}
+								</h6>
+							</div>
+						</div>
+					</Card.Footer>
 				</Card.Root>
 			</Tabs.Content>
 		</Tabs.Root>

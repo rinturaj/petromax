@@ -132,10 +132,7 @@
 				</h6>
 			</div>
 		</div>
-		<div class="grid">
-			<h6 class=" text-xs text-muted-foreground">Difference</h6>
-			<h6 class="text-sm font-extrabold text-green-600">$11222</h6>
-		</div>
+
 		<!-- <div>
 			<Button
 				on:click={() => {

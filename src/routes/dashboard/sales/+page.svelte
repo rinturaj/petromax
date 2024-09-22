@@ -249,53 +249,7 @@
 				</Card.Content>
 			</Card.Root>
 		</div>
-		<!-- <div class="flex items-center">
-			<div></div>
-			<div class="ml-auto flex items-center gap-2">
-				<DropdownMenu.Root>
-					<DropdownMenu.Trigger asChild let:builder>
-						<Button variant="outline" size="sm" class="h-7 gap-1 text-sm" builders={[builder]}>
-							<ListFilter class="h-3.5 w-3.5" />
-							<span class="sr-only sm:not-sr-only">Sort By</span>
-						</Button>
-					</DropdownMenu.Trigger>
-					<DropdownMenu.Content align="end">
-						<DropdownMenu.Label>Sort by</DropdownMenu.Label>
-						<DropdownMenu.Separator />
-						<DropdownMenu.Item
-							on:click={() => {
-								sortBy = 'Name';
-								sortDesc = !sortDesc;
-							}}>Name</DropdownMenu.Item
-						>
-						<DropdownMenu.Item
-							on:click={() => {
-								sortBy = 'Date';
-								sortDesc = !sortDesc;
-							}}>Date</DropdownMenu.Item
-						>
-						<DropdownMenu.Item
-							on:click={() => {
-								sortBy = 'Collection';
-								sortDesc = !sortDesc;
-							}}
-						>
-							Collection</DropdownMenu.Item
-						>
-						<DropdownMenu.Item
-							on:click={() => {
-								sortBy = 'Discrepancy';
-								sortDesc = !sortDesc;
-							}}>Discrepancy</DropdownMenu.Item
-						>
-					</DropdownMenu.Content>
-				</DropdownMenu.Root>
-				<Button size="sm" variant="outline" class="h-7 gap-1 text-sm">
-					<File class="h-3.5 w-3.5" />
-					<span class="sr-only sm:not-sr-only">Export</span>
-				</Button>
-			</div>
-		</div> -->
+
 		<Card.Root>
 			<Card.Header class="flex flex-row justify-between px-7">
 				<div>

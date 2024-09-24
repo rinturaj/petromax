@@ -28,6 +28,8 @@
 	import Calendar from '../../../lib/components/ui/calendar/calendar.svelte';
 	import AddCredit from '../../../lib/components/custom/addCredit.svelte';
 	import { derived } from 'svelte/store';
+	import type { DateRange } from 'bits-ui';
+	import DatePickerWithRange from '../../../lib/components/custom/date-picker-with-range.svelte';
 
 	const add = () => {
 		componentSide.set(AddExpenses);
@@ -53,11 +55,18 @@
 	const df = new DateFormatter('en-US', {
 		dateStyle: 'long'
 	});
+	let dateValue: DateRange;
+	let sortBy: string = 'salesDate';
+	let sortDesc: boolean;
 
-	let value: DateValue = new CalendarDate(new Date().getFullYear(), new Date().getMonth() + 1, 1);
-
-	$: startDate = value.toDate(getLocalTimeZone());
-	$: endDate = new CalendarDate(value.year, value.month + 1, 1).toDate(getLocalTimeZone());
+	$: startDate =
+		dateValue != null && dateValue.start != null
+			? dateValue.start?.toDate(getLocalTimeZone())
+			: new Date();
+	$: endDate =
+		dateValue != null && dateValue.end != null
+			? dateValue.end?.toDate(getLocalTimeZone())
+			: new Date();
 </script>
 
 <div class="flex min-h-screen w-full flex-col bg-muted/40 p-4">
@@ -66,11 +75,6 @@
 			<Card.Root class="sm:col-span-2">
 				<Card.Header class="pb-3">
 					<Card.Title>Your Expenses</Card.Title>
-					<Card.Description class="max-w-lg text-balance leading-relaxed">
-						Expenses Details for {new Intl.DateTimeFormat('en-US', { month: 'long' }).format(
-							value.toDate(getLocalTimeZone())
-						)}
-					</Card.Description>
 				</Card.Header>
 				<Card.Footer>
 					<Button on:click={add}>Create New Expenses</Button>
@@ -102,47 +106,25 @@
 			</Card.Root>
 		</div>
 		<Tabs.Root value="week">
-			<div class="flex items-center">
-				<div class="ml-auto flex items-center gap-2">
-					<!-- <DropdownMenu.Root>
-						<DropdownMenu.Trigger asChild let:builder>
-							<Button variant="outline" size="sm" class="h-7 gap-1 text-sm" builders={[builder]}>
-								<ListFilter class="h-3.5 w-3.5" />
-								<span class="sr-only sm:not-sr-only">Filter</span>
-							</Button>
-						</DropdownMenu.Trigger>
-						<DropdownMenu.Content align="end">
-							<DropdownMenu.Label>Filter by</DropdownMenu.Label>
-							<DropdownMenu.Separator />
-							<DropdownMenu.CheckboxItem checked>Fulfilled</DropdownMenu.CheckboxItem>
-							<DropdownMenu.CheckboxItem>Declined</DropdownMenu.CheckboxItem>
-							<DropdownMenu.CheckboxItem>Refunded</DropdownMenu.CheckboxItem>
-						</DropdownMenu.Content>
-					</DropdownMenu.Root> -->
-					<Popover.Root>
-						<Popover.Trigger asChild let:builder>
-							<Button
-								variant="outline"
-								class={cn(
-									'w-[240px] justify-start text-left font-normal',
-									!value && 'text-muted-foreground'
-								)}
-								builders={[builder]}
-							>
-								<CalendarIcon class="mr-2 h-4 w-4" />
-								{value ? df.format(value.toDate(getLocalTimeZone())) : 'Pick a date'}
-							</Button>
-						</Popover.Trigger>
-						<Popover.Content class="w-auto p-0" align="start">
-							<Calendar bind:value />
-						</Popover.Content>
-					</Popover.Root>
-				</div>
-			</div>
 			<Tabs.Content value="week">
 				<Card.Root>
-					<Card.Header class="px-7">
-						<Card.Title>Expenses</Card.Title>
+					<Card.Header class="flex flex-row justify-between px-7 ">
+						<div>
+							<Card.Title
+								>Expenses Details for {df.format(
+									dateValue?.start?.toDate(getLocalTimeZone()) ?? new Date()
+								)} - {df.format(
+									dateValue?.end?.toDate(getLocalTimeZone()) ?? new Date()
+								)}</Card.Title
+							>
+							<Card.Description>
+								Selected Date Range Sales are shown. Choose earlier date for previous month's
+								details.
+							</Card.Description>
+						</div>
+						<div>
+							<DatePickerWithRange bind:value={dateValue} />
+						</div>
 					</Card.Header>
 					<Card.Content>
 						<Table.Root>

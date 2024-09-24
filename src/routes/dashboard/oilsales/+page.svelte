@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -8,7 +9,7 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { componentData, componentSide } from '../../../lib/component.store';
 	import SaleOrder from '../../../lib/components/custom/saleOrder.svelte';
-	import { CalendarIcon, Edit, Expand } from 'lucide-svelte';
+	import { CalendarIcon, Edit, Expand, Check, ListFilter } from 'lucide-svelte';
 	import { Trash } from 'svelte-radix';
 	import { cn } from '$lib/utils.js';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
@@ -19,6 +20,7 @@
 		type DateValue,
 		getLocalTimeZone
 	} from '@internationalized/date';
+
 	import SaleOrderView from '../../../lib/components/custom/saleOrderView.svelte';
 	import { liveQuery } from 'dexie';
 	import { db } from '../../../database/db';
@@ -26,6 +28,8 @@
 	import { OliSalesModelClass, SaleOrder as SaleOrderClass } from '../../../database/model';
 	import OilSaleOrder from '../../../lib/components/custom/OilSaleOrder.svelte';
 	import OilSaleOrderView from '../../../lib/components/custom/OilSaleOrderView.svelte';
+	import type { DateRange } from 'bits-ui';
+	import DatePickerWithRange from '../../../lib/components/custom/date-picker-with-range.svelte';
 	componentSide.set(null);
 
 	function addComponent(oilSales?: OliSalesModel) {
@@ -41,9 +45,16 @@
 	let deleteSale: OliSalesModel;
 
 	$: oilSalesList = liveQuery(async () => {
-		return await db.oilsales.where('salesDate').between(startDate, endDate, true, true).toArray();
+		return await db.oilsales
+			.where('salesDate')
+			.between(startDate, endDate, true, true)
+			.and((x) => (filterBy != '' ? x.employeeName == filterBy : true))
+			.toArray();
 	});
 
+	$: nameList = liveQuery(async () => {
+		return [...new Set((await db.oilsales.toArray()).map((x) => x.employeeName))];
+	});
 	$: revenueMonth = $oilSalesList
 		? $oilSalesList.reduce(
 				(sum: any, x: OliSalesModel) => {
@@ -97,12 +108,19 @@
 	const df = new DateFormatter('en-US', {
 		dateStyle: 'long'
 	});
-	new Date().getMonth();
-	let value: DateValue = new CalendarDate(new Date().getFullYear(), new Date().getMonth() + 1, 1);
-	console.log(value.calendar.getDaysInMonth(value));
+	let dateValue: DateRange;
+	let sortBy: string = 'salesDate';
+	let filterBy: string = '';
+	let sortDesc: boolean;
 
-	$: startDate = value.toDate(getLocalTimeZone());
-	$: endDate = new CalendarDate(value.year, value.month + 1, 1).toDate(getLocalTimeZone());
+	$: startDate =
+		dateValue != null && dateValue.start != null
+			? dateValue.start?.toDate(getLocalTimeZone())
+			: new Date();
+	$: endDate =
+		dateValue != null && dateValue.end != null
+			? dateValue.end?.toDate(getLocalTimeZone())
+			: new Date();
 </script>
 
 <div class="flex min-h-screen w-full flex-col bg-muted/40 p-4">
@@ -148,33 +166,44 @@
 			<Card.Header class="flex flex-row justify-between px-7">
 				<div>
 					<Card.Title
-						>Sale Details for {new Intl.DateTimeFormat('en-US', { month: 'long' }).format(
-							value.toDate(getLocalTimeZone())
-						)}</Card.Title
+						>Sale Details for {df.format(
+							dateValue?.start?.toDate(getLocalTimeZone()) ?? new Date()
+						)} - {df.format(dateValue?.end?.toDate(getLocalTimeZone()) ?? new Date())}</Card.Title
 					>
 					<Card.Description>
-						Current month's oilSales shown. Choose earlier date for previous month's details.
+						Selected Date Range Sales are shown. Choose earlier date for previous month's details.
 					</Card.Description>
 				</div>
-				<div>
-					<Popover.Root>
-						<Popover.Trigger asChild let:builder>
-							<Button
-								variant="outline"
-								class={cn(
-									'w-[240px] justify-start text-left font-normal',
-									!value && 'text-muted-foreground'
-								)}
-								builders={[builder]}
-							>
-								<CalendarIcon class="mr-2 h-4 w-4" />
-								{value ? df.format(value.toDate(getLocalTimeZone())) : 'Pick a date'}
+				<div class="flex">
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger asChild let:builder>
+							<Button variant="outline" class="mr-2  gap-1 " builders={[builder]}>
+								<ListFilter class="h-3.5 w-3.5" />
+								<span class="sr-only sm:not-sr-only">Filter</span>
 							</Button>
-						</Popover.Trigger>
-						<Popover.Content class="w-auto p-0" align="start">
-							<Calendar bind:value />
-						</Popover.Content>
-					</Popover.Root>
+						</DropdownMenu.Trigger>
+						<DropdownMenu.Content align="end">
+							<DropdownMenu.Label>Filter by Name</DropdownMenu.Label>
+							<DropdownMenu.Separator />
+							{#if !!$nameList && $nameList.length > 0}
+								{#each $nameList as name}
+									<DropdownMenu.Item
+										class={filterBy === name ? 'bg-lime-50' : ''}
+										on:click={() => {
+											filterBy = name == filterBy ? '' : name;
+										}}
+									>
+										{#if filterBy === name}
+											<Check />
+										{/if}
+
+										{name}</DropdownMenu.Item
+									>
+								{/each}
+							{/if}
+						</DropdownMenu.Content>
+					</DropdownMenu.Root>
+					<DatePickerWithRange bind:value={dateValue} />
 				</div>
 			</Card.Header>
 			<Card.Content>

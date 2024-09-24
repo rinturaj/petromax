@@ -67,7 +67,7 @@
 
 						let logged = await LoginApi.login(email, password);
 						if (logged) {
-							goto(base + '/dashboard/sales');
+							goto(base + '/dashboard/overview');
 							login();
 							toast.success('Welcome to Petromax ');
 						} else {

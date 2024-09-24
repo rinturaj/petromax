@@ -15,6 +15,8 @@
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import Calendar from '../../../lib/components/ui/calendar/calendar.svelte';
 	import { cn } from '../../../lib/utils';
+	import type { DateRange } from 'bits-ui';
+	import DatePickerWithRange from '../../../lib/components/custom/date-picker-with-range.svelte';
 
 	let onDelete = false;
 	let deleteOil: Oil;
@@ -26,43 +28,27 @@
 	const df = new DateFormatter('en-US', {
 		dateStyle: 'long'
 	});
+	let dateValue: DateRange;
 
-	let value: DateValue = new CalendarDate(new Date().getFullYear(), new Date().getMonth() + 1, 1);
-
-	$: startDate = value.toDate(getLocalTimeZone());
-	$: endDate = new CalendarDate(value.year, value.month + 1, 1).toDate(getLocalTimeZone());
+	$: startDate =
+		dateValue != null && dateValue.start != null
+			? dateValue.start?.toDate(getLocalTimeZone())
+			: new Date();
+	$: endDate =
+		dateValue != null && dateValue.end != null
+			? dateValue.end?.toDate(getLocalTimeZone())
+			: new Date();
 </script>
 
 <div class="flex flex-row items-center justify-between py-3 align-middle">
 	<div>
-		<div class="">
-			Oil Stock Details for {new Intl.DateTimeFormat('en-US', { month: 'long' }).format(
-				value.toDate(getLocalTimeZone())
-			)}
-		</div>
+		<div class="">Oil Stock Details</div>
 		<p class="text-sm text-muted-foreground">
 			Current month's Oil stock shown. Choose earlier date for previous month's details.
 		</p>
 	</div>
 
-	<Popover.Root>
-		<Popover.Trigger asChild let:builder>
-			<Button
-				variant="outline"
-				class={cn(
-					'w-[240px] justify-start text-left font-normal',
-					!value && 'text-muted-foreground'
-				)}
-				builders={[builder]}
-			>
-				<CalendarIcon class="mr-2 h-4 w-4" />
-				{value ? df.format(value.toDate(getLocalTimeZone())) : 'Pick a date'}
-			</Button>
-		</Popover.Trigger>
-		<Popover.Content class="w-auto p-0" align="start">
-			<Calendar bind:value />
-		</Popover.Content>
-	</Popover.Root>
+	<DatePickerWithRange bind:value={dateValue} />
 </div>
 
 <Table.Root>

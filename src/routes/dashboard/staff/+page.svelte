@@ -7,10 +7,12 @@
 	import { db } from '../../../database/db';
 	import Badge from '../../../lib/components/ui/badge/badge.svelte';
 	import Button from '../../../lib/components/ui/button/button.svelte';
-	import { Trash2 } from 'lucide-svelte';
+	import { Trash2, Calculator } from 'lucide-svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { componentData, componentSide } from '../../../lib/component.store';
+	import SalaryCalculation from '../../../lib/components/custom/salaryCalculation.svelte';
 
 	let onDelete = false;
 	let deleteStaff: Staff;
@@ -19,6 +21,10 @@
 	});
 	async function updateStaffStatus(staff: Staff) {
 		await db.staff.update(staff.id, { status: staff.status });
+	}
+	function viewSalary(staff: Staff) {
+		componentData.set(staff);
+		componentSide.set(SalaryCalculation);
 	}
 </script>
 
@@ -29,6 +35,7 @@
 			<Table.Head>Joined</Table.Head>
 			<Table.Head>Status</Table.Head>
 			<Table.Head>Hourly Charge</Table.Head>
+			<Table.Head>Calculate</Table.Head>
 			<Table.Head class="text-right"></Table.Head>
 		</Table.Row>
 	</Table.Header>
@@ -43,7 +50,12 @@
 							>{staff.status ? 'Active' : 'Inactive'}</Badge
 						>
 					</Table.Cell>
-					<Table.Cell class="currency">{staff.hourlyPrice}</Table.Cell>
+					<Table.Cell class="currency text-center">{staff.hourlyPrice}</Table.Cell>
+					<Table.Cell class="">
+						<Button on:click={() => viewSalary(staff)} variant="ghost">
+							<Calculator class="h-4 w-4" />
+						</Button>
+					</Table.Cell>
 					<Table.Cell>
 						<div class="flex items-center justify-end space-x-2">
 							<Switch

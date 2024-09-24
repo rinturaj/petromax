@@ -8,11 +8,23 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { componentData, componentSide } from '../../../lib/component.store';
 	import SaleOrder from '../../../lib/components/custom/saleOrder.svelte';
-	import { CalendarIcon, Edit, Expand } from 'lucide-svelte';
+	import {
+		CalendarIcon,
+		Activity,
+		Edit,
+		Expand,
+		File,
+		ListFilter,
+		Check,
+		ArrowUp,
+		ArrowDown
+	} from 'lucide-svelte';
 	import { Trash } from 'svelte-radix';
-	import { cn } from '$lib/utils.js';
+	import { cn, toNumber } from '$lib/utils.js';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index';
+
 	import {
 		CalendarDate,
 		DateFormatter,
@@ -24,6 +36,8 @@
 	import { db } from '../../../database/db';
 	import type { SaleModel } from '../../../database/model';
 	import { SaleOrder as SaleOrderClass } from '../../../database/model';
+	import DatePickerWithRange from '../../../lib/components/custom/date-picker-with-range.svelte';
+	import type { DateRange } from 'bits-ui';
 	componentSide.set(null);
 
 	function addComponent(sales?: SaleModel) {
@@ -39,9 +53,25 @@
 	let deleteSale: SaleModel;
 
 	$: salesList = liveQuery(async () => {
-		return await db.sales.where('salesDate').between(startDate, endDate, true, true).toArray();
+		console.log(startDate, endDate);
+		if (sortDesc)
+			return await db.sales
+				.where('salesDate')
+				.between(startDate, endDate, true, true)
+				.and((x) => (filterBy != '' ? x.employeeName == filterBy : true))
+				.reverse()
+				.sortBy(sortBy);
+		else
+			return await db.sales
+				.where('salesDate')
+				.between(startDate, endDate, true, true)
+				.and((x) => (filterBy != '' ? x.employeeName == filterBy : true))
+				.sortBy(sortBy);
 	});
 
+	$: nameList = liveQuery(async () => {
+		return [...new Set((await db.sales.toArray()).map((x) => x.employeeName))];
+	});
 	$: revenueMonth = $salesList
 		? $salesList.reduce(
 				(sum: any, x: SaleModel) => {
@@ -111,12 +141,21 @@
 	const df = new DateFormatter('en-US', {
 		dateStyle: 'long'
 	});
-	new Date().getMonth();
-	let value: DateValue = new CalendarDate(new Date().getFullYear(), new Date().getMonth() + 1, 1);
-	console.log(value.calendar.getDaysInMonth(value));
 
-	$: startDate = value.toDate(getLocalTimeZone());
-	$: endDate = new CalendarDate(value.year, value.month + 1, 1).toDate(getLocalTimeZone());
+	let dateValue: DateRange;
+	let sortBy: string = 'salesDate';
+	let filterBy: string = '';
+
+	let sortDesc: boolean;
+
+	$: startDate =
+		dateValue != null && dateValue.start != null
+			? dateValue.start?.toDate(getLocalTimeZone())
+			: new Date();
+	$: endDate =
+		dateValue != null && dateValue.end != null
+			? dateValue.end?.toDate(getLocalTimeZone())
+			: new Date();
 </script>
 
 <div class="flex min-h-screen w-full flex-col bg-muted/40 p-4">
@@ -137,7 +176,7 @@
 			<Card.Root>
 				<Card.Header class="pb-2">
 					<Card.Description>Today's</Card.Description>
-					<Card.Title class="currency text-4xl">{totalDay.revenue}</Card.Title>
+					<Card.Title class="currency text-4xl">{totalDay.collected}</Card.Title>
 				</Card.Header>
 				<Card.Content>
 					<div class="text-xs {totalDay.discrepancyPer < 0 ? 'text-red-500' : 'text-green-700'}">
@@ -145,93 +184,188 @@
 					</div>
 				</Card.Content>
 				<Card.Footer>
-					<Progress value={25} aria-label="25% increase" />
+					<Progress
+						value={(totalDay.collected / totalDay.revenue) * 100}
+						aria-label="25% increase"
+					/>
 				</Card.Footer>
 			</Card.Root>
 			<Card.Root>
 				<Card.Header class="pb-2">
-					<Card.Description>This Month</Card.Description>
-					<Card.Title class="currency text-3xl">{revenueMonth.revenue}</Card.Title>
+					<Card.Description>Selected Date Range</Card.Description>
+					<Card.Title class="currency text-3xl">{revenueMonth.collected}</Card.Title>
 				</Card.Header>
 				<Card.Content>
 					<div
 						class="text-xs {revenueMonth.discrepancyPer < 0 ? 'text-red-500' : 'text-green-700'}"
 					>
-						{revenueMonth.discrepancyPer} discrepancy
+						{revenueMonth.discrepancyPer}% discrepancy
 					</div>
 				</Card.Content>
 				<Card.Footer>
-					<Progress value={12} aria-label="12% increase" />
+					<Progress
+						value={(revenueMonth.collected / revenueMonth.revenue) * 100}
+						aria-label="12% increase"
+					/>
 				</Card.Footer>
 			</Card.Root>
 		</div>
-		<div class="flex items-center">
-			<div></div>
-			<!-- <div class="ml-auto flex items-center gap-2">
-				<DropdownMenu.Root>
-					<DropdownMenu.Trigger asChild let:builder>
-						<Button variant="outline" size="sm" class="h-7 gap-1 text-sm" builders={[builder]}>
-							<ListFilter class="h-3.5 w-3.5" />
-							<span class="sr-only sm:not-sr-only">Filter</span>
-						</Button>
-					</DropdownMenu.Trigger>
-					<DropdownMenu.Content align="end">
-						<DropdownMenu.Label>Filter by</DropdownMenu.Label>
-						<DropdownMenu.Separator />
-						<DropdownMenu.CheckboxItem checked>Fulfilled</DropdownMenu.CheckboxItem>
-						<DropdownMenu.CheckboxItem>Declined</DropdownMenu.CheckboxItem>
-						<DropdownMenu.CheckboxItem>Refunded</DropdownMenu.CheckboxItem>
-					</DropdownMenu.Content>
-				</DropdownMenu.Root>
-				<Button size="sm" variant="outline" class="h-7 gap-1 text-sm">
-					<File class="h-3.5 w-3.5" />
-					<span class="sr-only sm:not-sr-only">Export</span>
-				</Button>
-			</div> -->
+
+		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+			<Card.Root>
+				<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+					<Card.Title class="text-sm font-medium">Total Revenue</Card.Title>
+					<!-- <DollarSign class="h-4 w-4 text-muted-foreground" /> -->
+				</Card.Header>
+				<Card.Content>
+					<div class="currency text-2xl font-bold">{revenueMonth.revenue}</div>
+				</Card.Content>
+			</Card.Root>
+			<Card.Root>
+				<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+					<Card.Title class="text-sm  font-medium">Collection</Card.Title>
+					<!-- <Users class="h-4 w-4 text-muted-foreground" /> -->
+				</Card.Header>
+				<Card.Content>
+					<div class="currency text-2xl font-bold">{revenueMonth.collected}</div>
+				</Card.Content>
+			</Card.Root>
+			<Card.Root>
+				<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+					<Card.Title class="text-sm font-medium">Credit</Card.Title>
+					<!-- <CreditCard class="h-4 w-4 text-muted-foreground" /> -->
+				</Card.Header>
+				<Card.Content>
+					<div class="currency text-2xl font-bold">{revenueMonth.credit}</div>
+				</Card.Content>
+			</Card.Root>
+			<Card.Root>
+				<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+					<Card.Title class="text-sm font-medium">Discrepancy</Card.Title>
+					<Activity class="h-4 w-4 text-muted-foreground" />
+				</Card.Header>
+				<Card.Content>
+					<div class="currency text-2xl font-bold">{revenueMonth.discrepancy}</div>
+				</Card.Content>
+			</Card.Root>
 		</div>
+
 		<Card.Root>
 			<Card.Header class="flex flex-row justify-between px-7">
 				<div>
 					<Card.Title
-						>Sale Details for {new Intl.DateTimeFormat('en-US', { month: 'long' }).format(
-							value.toDate(getLocalTimeZone())
-						)}</Card.Title
+						>Sale Details for {df.format(
+							dateValue?.start?.toDate(getLocalTimeZone()) ?? new Date()
+						)} - {df.format(dateValue?.end?.toDate(getLocalTimeZone()) ?? new Date())}</Card.Title
 					>
 					<Card.Description>
-						Current month's Sales shown. Choose earlier date for previous month's details.
+						Selected Date Range Sales are shown. Choose earlier date for previous month's details.
 					</Card.Description>
 				</div>
-				<div>
-					<Popover.Root>
-						<Popover.Trigger asChild let:builder>
-							<Button
-								variant="outline"
-								class={cn(
-									'w-[240px] justify-start text-left font-normal',
-									!value && 'text-muted-foreground'
-								)}
-								builders={[builder]}
-							>
-								<CalendarIcon class="mr-2 h-4 w-4" />
-								{value ? df.format(value.toDate(getLocalTimeZone())) : 'Pick a date'}
+				<div class="flex">
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger asChild let:builder>
+							<Button variant="outline" class="mr-2  gap-1 " builders={[builder]}>
+								<ListFilter class="h-3.5 w-3.5" />
+								<span class="sr-only sm:not-sr-only">Filter</span>
 							</Button>
-						</Popover.Trigger>
-						<Popover.Content class="w-auto p-0" align="start">
-							<Calendar bind:value />
-						</Popover.Content>
-					</Popover.Root>
+						</DropdownMenu.Trigger>
+						<DropdownMenu.Content align="end">
+							<DropdownMenu.Label>Filter by Name</DropdownMenu.Label>
+							<DropdownMenu.Separator />
+							{#if !!$nameList && $nameList.length > 0}
+								{#each $nameList as name}
+									<DropdownMenu.Item
+										class={filterBy === name ? 'bg-lime-50' : ''}
+										on:click={() => {
+											filterBy = name == filterBy ? '' : name;
+										}}
+									>
+										{#if filterBy === name}
+											<Check />
+										{/if}
+
+										{name}</DropdownMenu.Item
+									>
+								{/each}
+							{/if}
+						</DropdownMenu.Content>
+					</DropdownMenu.Root>
+					<DatePickerWithRange bind:value={dateValue} />
 				</div>
 			</Card.Header>
 			<Card.Content>
 				<Table.Root>
 					<Table.Header>
 						<Table.Row>
-							<Table.Head>Name</Table.Head>
-							<Table.Head class="hidden sm:table-cell">Date</Table.Head>
+							<Table.Head
+								><Button
+									on:click={() => {
+										sortBy = 'employeeName';
+										sortDesc = !sortDesc;
+									}}
+									variant="ghost"
+								>
+									{#if sortDesc && sortBy == 'employeeName'}
+										<ArrowUp size={13} />
+									{:else}
+										<ArrowDown size={13} />
+									{/if}
+									Name
+								</Button>
+							</Table.Head>
+							<Table.Head class="hidden sm:table-cell"
+								><Button
+									on:click={() => {
+										sortBy = 'salesDate';
+										sortDesc = !sortDesc;
+									}}
+									variant="ghost"
+								>
+									{#if sortDesc && sortBy == 'salesDate'}
+										<ArrowUp size={13} />
+									{:else}
+										<ArrowDown size={13} />
+									{/if}
+									Date
+								</Button>
+							</Table.Head>
 							<Table.Head class="hidden sm:table-cell">Shift Time</Table.Head>
-							<Table.Head class="hidden md:table-cell">Total</Table.Head>
-							<Table.Head class="hidden md:table-cell">Discrepancy</Table.Head>
-							<Table.Head class="text-right">Action</Table.Head>
+							<Table.Head class="hidden md:table-cell">Credit</Table.Head>
+							<Table.Head class=" hidden md:table-cell">
+								<Button
+									on:click={() => {
+										sortBy = 'totalCollection';
+										sortDesc = !sortDesc;
+									}}
+									variant="ghost"
+								>
+									{#if sortDesc && sortBy == 'totalCollection'}
+										<ArrowUp size={13} />
+									{:else}
+										<ArrowDown size={13} />
+									{/if}
+									Collection
+								</Button>
+							</Table.Head>
+							<Table.Head class="  md:table-cell">Total</Table.Head>
+							<Table.Head class="  md:table-cell">
+								<Button
+									on:click={() => {
+										sortBy = 'discrepancy';
+										sortDesc = !sortDesc;
+									}}
+									variant="ghost"
+								>
+									{#if sortDesc && sortBy == 'discrepancy'}
+										<ArrowUp size={13} />
+									{:else}
+										<ArrowDown size={13} />
+									{/if}
+									Discrepancy
+								</Button>
+							</Table.Head>
+							<Table.Head class="  text-right">Action</Table.Head>
 						</Table.Row>
 					</Table.Header>
 					<Table.Body>
@@ -249,7 +383,15 @@
 										<Badge class="text-xs" variant="default">{sales.checkOut}</Badge>
 										| {sales.totalHours} Hours
 									</Table.Cell>
-									<Table.Cell class="currency hidden md:table-cell">{sales.actuals}</Table.Cell>
+									<Table.Cell class="currency hidden md:table-cell"
+										>{toNumber(sales.credit)}</Table.Cell
+									>
+									<Table.Cell class="currency hidden md:table-cell"
+										>{toNumber(sales.totalCollection)}</Table.Cell
+									>
+									<Table.Cell class="currency hidden md:table-cell"
+										>{toNumber(sales.actuals)}</Table.Cell
+									>
 									<Table.Cell
 										class="hidden {sales.discrepancy >= 0
 											? 'text-green-600'

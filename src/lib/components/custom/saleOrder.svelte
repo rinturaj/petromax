@@ -109,7 +109,7 @@
 		}
 
 		sale.readings.push(reading.build());
-		sale.actuals = sale.readings.reduce((pv, cv) => cv.totalPrice + pv, 0);
+		sale.actuals = sale.readings.reduce((pv, cv) => toNumber(cv.totalPrice + pv), 0);
 		reading = new Reading();
 		selectedNosil = {
 			label: '',
@@ -122,7 +122,8 @@
 		// Remove the reading from the sale's readings array
 		sale.readings = sale.readings.filter((r) => r !== rd);
 		// Recalculate the actuals after deletion
-		sale.actuals = sale.readings.reduce((pv, cv) => cv.totalPrice + pv, 0);
+		sale.actuals = sale.readings.reduce((pv, cv) => toNumber(cv.totalPrice + pv), 0);
+
 		sale = sale;
 
 		const ns = $nosilList.find((x) => x.name === rd.nosil);
@@ -474,8 +475,6 @@
 			>
 			<Button
 				disabled={!(
-					sale.actuals > 0 &&
-					sale.totalCollection > 0 &&
 					sale.readings.length > 0 &&
 					!!sale.checkIn &&
 					!!sale.checkOut &&

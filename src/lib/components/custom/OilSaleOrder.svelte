@@ -65,7 +65,7 @@
 		console.log(sale.salesDate, selectedDate);
 	}
 	async function addReading() {
-		if (Number(item.unit) == 0 || Number(item.unitPrice) == 0) {
+		if (Number(item.unitPrice) == 0) {
 			toast.error('item size/unitprice/quantity is not a number');
 			return;
 		}
@@ -94,8 +94,8 @@
 		const oil = await db.oil.where('name').equals(value).toArray();
 
 		if (!oil) return;
-
-		item.unitPrice = oil.pop()?.unitPrice ?? 0;
+		let o = oil.pop();
+		item.unitPrice = o?.unitPrice ?? 0;
 	}
 </script>
 
@@ -170,17 +170,7 @@
 						{/if}
 					</datalist>
 				</div>
-				<div class="grid grid-cols-4 items-end gap-2">
-					<div class="grid gap-3">
-						<Label for="name">Size in (mL)</Label>
-						<Input
-							id="name"
-							class="block"
-							type="number"
-							placeholder="Item size in (mL)"
-							bind:value={item.unit}
-						/>
-					</div>
+				<div class="grid grid-cols-3 items-end gap-2">
 					<div class="grid gap-3">
 						<Label for="name">Quantity</Label>
 						<Input
@@ -203,12 +193,9 @@
 					</div>
 
 					<div class="grid gap-3">
-						<Button
-							disabled={item.unit == 0 || item.unitPrice == 0 || item.quantity == 0}
-							on:click={addReading}
-						>
+						<Button disabled={item.unitPrice == 0 || item.quantity == 0} on:click={addReading}>
 							<span class="currency mx-3">
-								{Number(item.unit * item.unitPrice * item.quantity).toFixed(2)}
+								{Number(item.unitPrice * item.quantity).toFixed(2)}
 							</span>
 							Add</Button
 						>

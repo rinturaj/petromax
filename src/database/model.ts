@@ -154,7 +154,7 @@ export interface OilItem {
 }
 export class OilItemClass implements OilItem {
 	build(): OilItem {
-		this.amount = toNumber(this.quantity * this.unitPrice * this.unit);
+		this.amount = toNumber(this.quantity * this.unitPrice);
 		return this;
 	}
 	name: string = '';

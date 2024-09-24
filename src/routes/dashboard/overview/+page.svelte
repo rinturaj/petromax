@@ -23,6 +23,7 @@
 	import type { SaleModel } from '../../../database/model';
 	import SalesOverview from '../../../lib/components/custom/dashboard/salesOverview.svelte';
 	import SalesChart from '../../../lib/components/custom/dashboard/salesChart.svelte';
+	import Analytics from '../../../lib/components/custom/dashboard/Analytics.svelte';
 
 	$: salesList = liveQuery(async () => {
 		console.log(startDate, endDate);
@@ -113,12 +114,15 @@
 			<Tabs.List>
 				<Tabs.Trigger value="overview">Overview</Tabs.Trigger>
 				<Tabs.Trigger value="analytics">Analytics</Tabs.Trigger>
-				<Tabs.Trigger value="reports">Reports</Tabs.Trigger>
-				<Tabs.Trigger value="notifications">Notifications</Tabs.Trigger>
+				<!-- <Tabs.Trigger value="reports">Reports</Tabs.Trigger>
+				<Tabs.Trigger value="notifications">Notifications</Tabs.Trigger> -->
 			</Tabs.List>
 			<Tabs.Content value="overview" class="space-y-4">
 				<SalesOverview {revenueMonth}></SalesOverview>
 				<SalesChart {salesList}></SalesChart>
+			</Tabs.Content>
+			<Tabs.Content value="analytics" class="space-y-4">
+				<Analytics {salesList}></Analytics>
 			</Tabs.Content>
 		</Tabs.Root>
 	</div>

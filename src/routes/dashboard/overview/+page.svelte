@@ -24,6 +24,14 @@
 	import SalesOverview from '../../../lib/components/custom/dashboard/salesOverview.svelte';
 	import SalesChart from '../../../lib/components/custom/dashboard/salesChart.svelte';
 	import Analytics from '../../../lib/components/custom/dashboard/Analytics.svelte';
+	import { toNumber } from '../../../lib/utils';
+
+	$: creditList = liveQuery(async () => {
+		return await db.credit
+			.where('createdOn')
+			.between(startDate, endDate, true, true)
+			.sortBy(sortBy);
+	});
 
 	$: salesList = liveQuery(async () => {
 		console.log(startDate, endDate);
@@ -41,15 +49,15 @@
 		? $salesList.reduce(
 				(sum: any, x: SaleModel) => {
 					return {
-						revenue: Number(sum.revenue) + Number(x.actuals),
-						discrepancy: Number(sum.discrepancy) + Number(x.discrepancy),
-						collected: Number(sum.collected) + Number(x.totalCollection),
-						inhand: Number(sum.inhand) + Number(x.inHand),
-						credit: Number(sum.credit) + Number(x.credit),
-						discrepancyPer: (
+						revenue: toNumber(Number(sum.revenue) + Number(x.actuals)),
+						discrepancy: toNumber(Number(sum.discrepancy) + Number(x.discrepancy)),
+						collected: toNumber(Number(sum.collected) + Number(x.totalCollection)),
+						inhand: toNumber(Number(sum.inhand) + Number(x.inHand)),
+						credit: toNumber(Number(sum.credit) + Number(x.credit)),
+						discrepancyPer: toNumber(
 							((Number(sum.discrepancy) + Number(x.discrepancy)) * 100) /
-							(Number(sum.revenue) + Number(x.actuals))
-						).toFixed(2)
+								(Number(sum.revenue) + Number(x.actuals))
+						)
 					};
 				},
 				{
@@ -122,7 +130,7 @@
 				<SalesChart {salesList}></SalesChart>
 			</Tabs.Content>
 			<Tabs.Content value="analytics" class="space-y-4">
-				<Analytics {salesList}></Analytics>
+				<Analytics {creditList} {salesList}></Analytics>
 			</Tabs.Content>
 		</Tabs.Root>
 	</div>

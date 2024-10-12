@@ -2,6 +2,7 @@
 	import { Activity, Coins, PaintBucket, CreditCard } from 'lucide-svelte';
 
 	import * as Card from '../../ui/card';
+	import { toNumber } from '../../../utils';
 
 	export let revenueMonth;
 </script>
@@ -13,7 +14,7 @@
 			<Coins class="h-4 w-4 text-muted-foreground" />
 		</Card.Header>
 		<Card.Content>
-			<div class="currency text-2xl font-bold text-blue-950">{revenueMonth?.revenue}</div>
+			<div class="currency text-2xl font-bold text-blue-950">{toNumber(revenueMonth?.revenue)}</div>
 		</Card.Content>
 	</Card.Root>
 	<Card.Root>
@@ -22,7 +23,9 @@
 			<PaintBucket class="h-4 w-4 text-muted-foreground" />
 		</Card.Header>
 		<Card.Content>
-			<div class="currency text-2xl font-bold text-blue-700">{revenueMonth?.collected}</div>
+			<div class="currency text-2xl font-bold text-blue-700">
+				{toNumber(revenueMonth?.collected)}
+			</div>
 		</Card.Content>
 	</Card.Root>
 	<Card.Root>
@@ -31,7 +34,7 @@
 			<CreditCard class="h-4 w-4 text-muted-foreground" />
 		</Card.Header>
 		<Card.Content>
-			<div class="currency text-2xl font-bold">{revenueMonth?.credit}</div>
+			<div class="currency text-2xl font-bold">{toNumber(revenueMonth?.credit)}</div>
 		</Card.Content>
 	</Card.Root>
 	<Card.Root>
@@ -41,11 +44,11 @@
 		</Card.Header>
 		<Card.Content>
 			<div
-				class="currency text-2xl font-bold {revenueMonth.discrepancy >= 0
+				class="currency text-2xl font-bold {toNumber(revenueMonth.discrepancy) >= 0
 					? 'text-green-600'
 					: 'text-red-600'}"
 			>
-				{revenueMonth.discrepancy}
+				{toNumber(revenueMonth.discrepancy)}
 			</div>
 		</Card.Content>
 	</Card.Root>

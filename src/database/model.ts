@@ -231,3 +231,83 @@ export class SaleOrder implements SaleModel {
 		);
 	}
 }
+
+export interface SalesRecord {
+	denomination: number;
+	type: 'coins' | 'notes';
+	quantity: number;
+	totalValue: number;
+}
+
+export interface SalesSummary {
+	id?: number;
+	createdOn: Date;
+	records: SalesRecord[];
+	total: number;
+	totalCollectionReceived: number;
+	totalSaleInHand: number;
+	card: number;
+	upi: number;
+	credit: number;
+	hpPay: number;
+	cash: number;
+	excessInHand: number;
+	creditReceived: number;
+	balance: number;
+}
+
+export class SalesSummaryClass implements SalesSummary {
+	id?: number;
+	createdOn: Date;
+	records: SalesRecord[];
+	total: number;
+	totalSaleInHand: number;
+	card: number;
+	upi: number;
+	totalCollectionReceived: number;
+	credit: number;
+	hpPay: number;
+	cash: number;
+	excessInHand: number;
+	creditReceived: number;
+	balance: number;
+	constructor() {
+		this.createdOn = new Date();
+		this.records = this.generateRecoders();
+		this.total = 0;
+		this.totalSaleInHand = 0;
+		this.totalCollectionReceived = 0;
+		this.card = 0;
+		this.upi = 0;
+		this.credit = 0;
+		this.hpPay = 0;
+		this.cash = 0;
+		this.excessInHand = 0;
+		this.creditReceived = 0;
+		this.balance = 0;
+	}
+
+	generateRecoders(): SalesRecord[] {
+		return [
+			{ type: 'notes', denomination: 500, quantity: 0, totalValue: 0 },
+			{ type: 'notes', denomination: 200, quantity: 0, totalValue: 0 },
+			{ type: 'notes', denomination: 100, quantity: 0, totalValue: 0 },
+			{ type: 'notes', denomination: 50, quantity: 0, totalValue: 0 },
+			{ type: 'notes', denomination: 20, quantity: 0, totalValue: 0 },
+			{ type: 'notes', denomination: 10, quantity: 0, totalValue: 0 },
+			{ type: 'coins', denomination: 10, quantity: 0, totalValue: 0 },
+			{ type: 'coins', denomination: 5, quantity: 0, totalValue: 0 },
+			{ type: 'coins', denomination: 2, quantity: 0, totalValue: 0 },
+			{ type: 'coins', denomination: 1, quantity: 0, totalValue: 0 }
+		];
+	}
+	// Helper method to calculate total from records
+	calculateTotal(): void {
+		this.total = this.records.reduce((sum, record) => sum + record.totalValue, 0);
+	}
+
+	// Helper method to calculate excess in hand
+	calculateExcessInHand(): void {
+		this.excessInHand = this.totalSaleInHand - this.total - this.hpPay + this.creditReceived;
+	}
+}

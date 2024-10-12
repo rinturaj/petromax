@@ -23,7 +23,7 @@
 		getLocalTimeZone,
 		type DateValue
 	} from '@internationalized/date';
-	import { cn } from '../../../lib/utils';
+	import { cn, toNumber } from '../../../lib/utils';
 	import { CalendarIcon, Trash2 } from 'lucide-svelte';
 	import Calendar from '../../../lib/components/ui/calendar/calendar.svelte';
 	import AddCredit from '../../../lib/components/custom/addCredit.svelte';
@@ -83,7 +83,7 @@
 			<Card.Root>
 				<Card.Header class="pb-2">
 					<Card.Description>Today's</Card.Description>
-					<Card.Title class="currency text-4xl">{totalDay || 0}</Card.Title>
+					<Card.Title class="currency text-4xl">{toNumber(totalDay || 0)}</Card.Title>
 				</Card.Header>
 				<!-- <Card.Content>
 					<div class="text-xs text-muted-foreground">+25% from last week</div>
@@ -95,7 +95,7 @@
 			<Card.Root>
 				<Card.Header class="pb-2">
 					<Card.Description>This Month</Card.Description>
-					<Card.Title class="currency text-3xl">{totalMonth || 0}</Card.Title>
+					<Card.Title class="currency text-3xl">{toNumber(totalMonth || 0)}</Card.Title>
 				</Card.Header>
 				<!-- <Card.Content>
 					<div class="text-xs text-muted-foreground">+10% from last month</div>

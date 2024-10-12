@@ -23,7 +23,7 @@
 		getLocalTimeZone,
 		type DateValue
 	} from '@internationalized/date';
-	import { cn } from '../../../lib/utils';
+	import { cn, toNumber } from '../../../lib/utils';
 	import { CalendarIcon, Trash2, Check } from 'lucide-svelte';
 	import Calendar from '../../../lib/components/ui/calendar/calendar.svelte';
 	import AddCredit from '../../../lib/components/custom/addCredit.svelte';
@@ -106,7 +106,9 @@
 			<Card.Root>
 				<Card.Header class="pb-2">
 					<Card.Description>This Month Settled</Card.Description>
-					<Card.Title class="currency text-4xl text-green-700">{totalSettled || 0}</Card.Title>
+					<Card.Title class="currency text-4xl text-green-700"
+						>{toNumber(totalSettled || 0)}</Card.Title
+					>
 				</Card.Header>
 				<Card.Content></Card.Content>
 			</Card.Root>
@@ -114,7 +116,7 @@
 				<Card.Header class="pb-2">
 					<Card.Description>This Month Credit</Card.Description>
 					{#if !!totalCredit}
-						<Card.Title class="currency text-3xl text-red-600">{totalCredit}</Card.Title>
+						<Card.Title class="currency text-3xl text-red-600">{toNumber(totalCredit)}</Card.Title>
 					{/if}
 				</Card.Header>
 				<Card.Content></Card.Content>
@@ -205,7 +207,7 @@
 														? 'text-red-600'
 														: 'text-green-600'}"
 												>
-													{stock.amount}</b
+													{toNumber(stock.amount)}</b
 												>
 											</Table.Cell>
 
@@ -244,21 +246,21 @@
 						<div class="grid w-full grid-cols-3 gap-2">
 							<div class="grid">
 								<h6 class=" text-xs text-muted-foreground">Credit</h6>
-								<h6 class="currency text-sm font-semibold">{totalCredit || 0}</h6>
+								<h6 class="currency text-sm font-semibold">{toNumber(totalCredit || 0)}</h6>
 							</div>
 							<div class="grid">
 								<h6 class=" text-xs text-muted-foreground">Settled</h6>
-								<h6 class="currency text-sm font-semibold">{totalSettled || 0}</h6>
+								<h6 class="currency text-sm font-semibold">{toNumber(totalSettled || 0)}</h6>
 							</div>
 
 							<div class="grid">
 								<h6 class=" text-xs text-muted-foreground">Balance</h6>
 								<h6
-									class="currency text-sm font-extrabold {totalCredit - totalSettled >= 0
+									class="currency text-sm font-extrabold {toNumber(totalCredit - totalSettled) >= 0
 										? 'text-green-600'
 										: 'text-red-600'}"
 								>
-									{totalCredit - totalSettled}
+									{toNumber(totalCredit - totalSettled)}
 								</h6>
 							</div>
 						</div>

@@ -6,6 +6,7 @@ export const componentData = writable();
 export const importStatus = writable(0);
 
 export const isAuthenticated = writable(true);
+export const viewSummary = writable(0);
 
 export function login() {
 	isAuthenticated.set(true);

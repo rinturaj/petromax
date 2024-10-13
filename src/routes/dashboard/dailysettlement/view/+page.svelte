@@ -1,28 +1,18 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { liveQuery } from 'dexie';
-	import type { PageData, PageServerData } from '../$types';
 	import { db } from '../../../../database/db';
-	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
-	import ChevronRight from 'lucide-svelte/icons/chevron-right';
 	import Copy from 'lucide-svelte/icons/copy';
 	import CreditCard from 'lucide-svelte/icons/credit-card';
-	import EllipsisVertical from 'lucide-svelte/icons/ellipsis-vertical';
-	import Truck from 'lucide-svelte/icons/truck';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import * as Pagination from '$lib/components/ui/pagination/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { DateFormatter } from '@internationalized/date';
 	import { Download } from 'lucide-svelte';
 	import { toFixed, toNumber } from '../../../../lib/utils';
 	import NosilOverview from '../../../../lib/components/custom/dashboard/NosilOverview.svelte';
-
-	export let data;
-
 	import html2canvas from 'html2canvas';
 	import { jsPDF } from 'jspdf';
+	import { viewSummary } from '../../../../lib/component.store';
 	let divToPrint: HTMLElement;
 
 	async function printDiv() {
@@ -52,7 +42,7 @@
 	}
 
 	$: summary = liveQuery(async () => {
-		return await db.salesSummary.get(Number(data.id));
+		return await db.salesSummary.get($viewSummary);
 	});
 
 	$: salesList = liveQuery(async () => {

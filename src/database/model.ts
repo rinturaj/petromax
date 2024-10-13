@@ -254,6 +254,8 @@ export interface SalesSummary {
 	excessInHand: number;
 	creditReceived: number;
 	balance: number;
+	oilSalesActuals: number;
+	oilSalesReceived: number;
 }
 
 export class SalesSummaryClass implements SalesSummary {
@@ -271,6 +273,8 @@ export class SalesSummaryClass implements SalesSummary {
 	excessInHand: number;
 	creditReceived: number;
 	balance: number;
+	oilSalesActuals: number;
+	oilSalesReceived: number;
 	constructor() {
 		this.createdOn = new Date();
 		this.records = this.generateRecoders();
@@ -285,6 +289,8 @@ export class SalesSummaryClass implements SalesSummary {
 		this.excessInHand = 0;
 		this.creditReceived = 0;
 		this.balance = 0;
+		this.oilSalesActuals = 0;
+		this.oilSalesReceived = 0;
 	}
 
 	generateRecoders(): SalesRecord[] {

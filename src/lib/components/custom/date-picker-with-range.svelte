@@ -23,12 +23,12 @@
 	);
 
 	export let value: DateRange | undefined = {
-		start: startValue.set({ hour: 0, minute: 0 }),
+		start: startValue.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }),
 		end: startValue.set({ day: new Date().getDate(), hour: 23, minute: 59 })
 	};
 
 	$: if (value && value.end) {
-		value.end = value.end?.set({ hour: 23, minute: 59 });
+		value.end = value.end?.set({ hour: 23, minute: 59, second: 99 });
 	}
 </script>
 

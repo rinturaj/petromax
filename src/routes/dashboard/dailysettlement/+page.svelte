@@ -4,17 +4,22 @@
 	import Button from '../../../lib/components/ui/button/button.svelte';
 	import DatePickerWithRange from '../../../lib/components/custom/date-picker-with-range.svelte';
 	import type { Expenses, SalesSummary } from '../../../database/model';
-	import { componentSide } from '../../../lib/component.store';
+	import { componentData, componentSide } from '../../../lib/component.store';
 	import type { DateRange } from 'bits-ui';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { db } from '../../../database/db';
 	import DailySettlement from '../../../lib/components/custom/DailySettlement.svelte';
 	import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
 	import { liveQuery } from 'dexie';
-	import { Trash2 } from 'lucide-svelte';
+	import { Trash2, Edit } from 'lucide-svelte';
+	import { base } from '$app/paths';
 
 	const add = () => {
 		componentSide.set(DailySettlement);
+	};
+	const addComponent = (ex: SalesSummary) => {
+		componentSide.set(DailySettlement);
+		componentData.set(ex);
 	};
 
 	let onDelete = false;
@@ -118,6 +123,12 @@
 									<Table.Cell class="currency font-bold">{exp.balance}</Table.Cell>
 									<Table.Cell>
 										<div class="flex items-center justify-end space-x-2">
+											<Button variant="link" href={`/dashboard/dailysettlement/${exp.id}`}>
+												View Report
+											</Button>
+											<Button on:click={() => addComponent(exp)} size="icon" variant="ghost">
+												<Edit size={16}></Edit>
+											</Button>
 											<Button
 												on:click={() => {
 													deleteExp = exp;
@@ -133,11 +144,15 @@
 							{/each}
 						{:else}
 							<Table.Row>
-								<Table.Cell colspan={4} class="mt-4 pt-4 text-center font-medium">
+								<Table.Cell colspan={6} class="mt-4 pt-4 text-center font-medium">
 									<div class="flex flex-col items-center">
-										<div class="text-2xl font-bold text-gray-700">No Expenses Data Available</div>
-										<p class="mt-2 text-gray-500">Please add some Expenses data to get started.</p>
-										<Button class="mt-3" on:click={() => add()}>Add New Expenses</Button>
+										<div class="text-2xl font-bold text-gray-700">
+											No Sales Summary Data Available
+										</div>
+										<p class="mt-2 text-gray-500">
+											Please add some Sales Summary data to get started.
+										</p>
+										<Button class="mt-3" on:click={() => add()}>Add New Sales Summary</Button>
 									</div>
 								</Table.Cell>
 							</Table.Row>
@@ -166,7 +181,7 @@
 			>
 			<AlertDialog.Action
 				on:click={() => {
-					db.expenses.delete(deleteExp.id);
+					db.salesSummary.delete(deleteExp.id);
 					onDelete = false;
 				}}>Continue</AlertDialog.Action
 			>

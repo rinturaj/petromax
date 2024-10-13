@@ -25,6 +25,31 @@
 	import SalesChart from '../../../lib/components/custom/dashboard/salesChart.svelte';
 	import Analytics from '../../../lib/components/custom/dashboard/Analytics.svelte';
 	import { toNumber } from '../../../lib/utils';
+	import html2canvas from 'html2canvas';
+	import { jsPDF } from 'jspdf';
+	let divToPrint: HTMLElement;
+
+	async function printDiv() {
+		const canvas = await html2canvas(divToPrint, {
+			scale: 2 // Increase the scale for higher quality
+		});
+
+		// Convert canvas to an image
+		const imgData = canvas.toDataURL('image/png');
+
+		// Create a new PDF document
+		const pdf = new jsPDF({
+			orientation: 'l', // 'p' for portrait, 'l' for landscape
+			unit: 'px', // Set the unit to pixels for better control
+			format: [canvas.width, canvas.height] // Set the PDF size to match the canvas
+		});
+
+		// Add the captured image to the PDF
+		pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+
+		// Save the PDF
+		pdf.save('download.pdf');
+	}
 
 	$: creditList = liveQuery(async () => {
 		return await db.credit
@@ -112,26 +137,28 @@
 			<h2 class="text-3xl font-bold tracking-tight">Overview</h2>
 			<div class="flex items-center space-x-2">
 				<DatePickerWithRange bind:value={dateValue} />
-				<Button size="sm">
+				<Button on:click={printDiv} size="sm">
 					<Download class="mr-2 h-4 w-4" />
 					Download
 				</Button>
 			</div>
 		</div>
-		<Tabs.Root value="overview" class="space-y-4">
-			<Tabs.List>
-				<Tabs.Trigger value="overview">Overview</Tabs.Trigger>
-				<Tabs.Trigger value="analytics">Analytics</Tabs.Trigger>
-				<!-- <Tabs.Trigger value="reports">Reports</Tabs.Trigger>
+		<div class="border p-3" bind:this={divToPrint}>
+			<Tabs.Root value="overview" class="space-y-4">
+				<Tabs.List>
+					<Tabs.Trigger value="overview">Overview</Tabs.Trigger>
+					<Tabs.Trigger value="analytics">Analytics</Tabs.Trigger>
+					<!-- <Tabs.Trigger value="reports">Reports</Tabs.Trigger>
 				<Tabs.Trigger value="notifications">Notifications</Tabs.Trigger> -->
-			</Tabs.List>
-			<Tabs.Content value="overview" class="space-y-4">
-				<SalesOverview {revenueMonth}></SalesOverview>
-				<SalesChart {salesList}></SalesChart>
-			</Tabs.Content>
-			<Tabs.Content value="analytics" class="space-y-4">
-				<Analytics {creditList} {salesList}></Analytics>
-			</Tabs.Content>
-		</Tabs.Root>
+				</Tabs.List>
+				<Tabs.Content value="overview" class="space-y-4">
+					<SalesOverview {revenueMonth}></SalesOverview>
+					<SalesChart {salesList}></SalesChart>
+				</Tabs.Content>
+				<Tabs.Content value="analytics" class="space-y-4">
+					<Analytics {creditList} {salesList}></Analytics>
+				</Tabs.Content>
+			</Tabs.Root>
+		</div>
 	</div>
 </div>

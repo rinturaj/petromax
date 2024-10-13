@@ -7,6 +7,7 @@
 	import {
 		SalesSummaryClass,
 		type CreditModel,
+		type OliSalesModel,
 		type SalesRecord,
 		type SalesSummary
 	} from '../../../database/model';
@@ -19,8 +20,10 @@
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
 	import { Coins, Trash2 } from 'lucide-svelte';
 	import * as Table from '$lib/components/ui/table/index.js';
+	import OilSaleOrder from './OilSaleOrder.svelte';
 
 	let sales: any = {};
+	let oilsales: any = {};
 	export let data: SalesSummary = new SalesSummaryClass();
 
 	$: creditList = liveQuery(async () => {
@@ -39,11 +42,25 @@
 		endDate.setHours(23, 59, 59, 999);
 		return await db.sales.where('salesDate').between(startDate, endDate, true, true).toArray();
 	});
+	$: oilSalesList = liveQuery(async () => {
+		startDate.setHours(0, 0, 0, 0);
+		endDate.setHours(23, 59, 59, 999);
+		return await db.oilsales.where('salesDate').between(startDate, endDate, true, true).toArray();
+	});
 
 	$: cashRecords = data.records.reduce(
 		(sum: number, x: SalesRecord) => sum + toNumber(x.denomination * x.quantity),
 		0
 	);
+
+	$: if (!!$oilSalesList) {
+		oilsales = $oilSalesList.reduce(
+			(sum: { sale: number; saleActuls: number }, x: OliSalesModel) => {
+				return { sale: sum.sale + x.totalCollection, saleActuls: x.actuals };
+			},
+			{ sale: 0, saleActuls: 0 }
+		);
+	}
 
 	$: if (!!$salesList) {
 		sales = $salesList.reduce(
@@ -94,15 +111,20 @@
 		data.creditReceived = totalSettled;
 		data.totalSaleInHand = sales.byCash;
 		data.totalCollectionReceived = cashRecords;
+		data.cash = sales.byCash;
 		data.card = sales.card;
 		data.credit = sales.credit;
 		data.hpPay = sales.hpPay;
 		data.upi = sales.upiPayment;
-		data.total = sales.revenue;
+		data.total = sales.actuals;
+		data.oilSalesActuals = toNumber(oilsales.saleActuls);
+		data.oilSalesReceived = toNumber(oilsales.sale);
 
 		data.excessInHand = toNumber(cashRecords - sales.byCash);
-		data.balance = toNumber(data.excessInHand - totalSettled);
-		db.salesSummary.add(data);
+		data.balance = toNumber(data.excessInHand - totalSettled - data.oilSalesReceived);
+		if (data.id == undefined) db.salesSummary.add(data);
+		else db.salesSummary.update(data.id, { ...data });
+
 		componentSide.set(null);
 		toast.success('Daily Summary added successfully');
 	};
@@ -162,6 +184,18 @@
 						<span class="currency text-lg font-bold text-blue-700">{totalSettled}</span>
 					</div>
 				</div>
+				<div class="grid grid-cols-2 gap-5">
+					<div class="flex items-center justify-between border-b">
+						<span class="text-sm font-semibold">Oil Sales </span>
+						<span class="currency text-lg font-bold text-blue-700"
+							>{toNumber(oilsales.saleActuls)}</span
+						>
+					</div>
+					<div class="flex items-center justify-between border-b">
+						<span class="text-sm font-semibold">Oil Sales Collection</span>
+						<span class="currency text-lg font-bold text-blue-700">{toNumber(oilsales.sale)}</span>
+					</div>
+				</div>
 				<div class="grid gap-3">
 					<Table.Root>
 						<Table.Header>
@@ -200,7 +234,7 @@
 		</ScrollArea>
 	</Card.Content>
 	<Card.Footer class="justify-end">
-		<div class="grid w-full grid-cols-5 gap-2">
+		<div class="grid w-full grid-cols-6 gap-2">
 			<div class="grid">
 				<h6 class=" text-xs text-muted-foreground">Total Sale in Hand</h6>
 				<h6 class="currency text-sm font-semibold">{sales.byCash}</h6>
@@ -230,17 +264,21 @@
 				<h6 class=" text-xs text-muted-foreground">Credit Settled</h6>
 				<h6 class="currency text-sm font-semibold">{totalSettled}</h6>
 			</div>
+			<div class="grid">
+				<h6 class=" text-xs text-muted-foreground">Oil Sale</h6>
+				<h6 class="currency text-sm font-semibold">{toNumber(oilsales.sale)}</h6>
+			</div>
 
 			<div class="grid">
 				<h6 class=" text-xs text-muted-foreground">Balance</h6>
 				<h6
 					class="currency text-sm font-extrabold {toNumber(
-						cashRecords - sales.byCash - totalSettled
+						cashRecords - sales.byCash - totalSettled - oilsales.sale
 					) > 0
 						? 'text-green-600'
 						: 'text-red-600'}"
 				>
-					{toNumber(cashRecords - sales.byCash - totalSettled)}
+					{toNumber(cashRecords - sales.byCash - totalSettled - oilsales.sale)}
 				</h6>
 			</div>
 		</div>

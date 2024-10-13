@@ -59,6 +59,8 @@ export interface Stock {
 	id?: number;
 	openingStock: number;
 	dipStock: number;
+	stockBySystem: number;
+	stockBySales: number;
 	closingStock: number;
 	type: string;
 	createdOn: Date;

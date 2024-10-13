@@ -4,7 +4,7 @@
 	import Button from '../../../lib/components/ui/button/button.svelte';
 	import DatePickerWithRange from '../../../lib/components/custom/date-picker-with-range.svelte';
 	import type { Expenses, SalesSummary } from '../../../database/model';
-	import { componentData, componentSide } from '../../../lib/component.store';
+	import { componentData, componentSide, viewSummary } from '../../../lib/component.store';
 	import type { DateRange } from 'bits-ui';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { db } from '../../../database/db';
@@ -13,9 +13,15 @@
 	import { liveQuery } from 'dexie';
 	import { Trash2, Edit } from 'lucide-svelte';
 	import { base } from '$app/paths';
+	import { goto } from '$app/navigation';
 
 	const add = () => {
 		componentSide.set(DailySettlement);
+	};
+
+	const view = (id: number) => {
+		viewSummary.set(id);
+		goto(`${base}/dashboard/dailysettlement/view`);
 	};
 	const addComponent = (ex: SalesSummary) => {
 		componentSide.set(DailySettlement);
@@ -123,7 +129,7 @@
 									<Table.Cell class="currency font-bold">{exp.balance}</Table.Cell>
 									<Table.Cell>
 										<div class="flex items-center justify-end space-x-2">
-											<Button variant="link" href={`/dashboard/dailysettlement/${exp.id}`}>
+											<Button variant="link" on:click={(e) => view(Number(exp.id))}>
 												View Report
 											</Button>
 											<Button on:click={() => addComponent(exp)} size="icon" variant="ghost">

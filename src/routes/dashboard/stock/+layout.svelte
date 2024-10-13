@@ -3,13 +3,14 @@
 	import * as Card from '../../../lib/components/ui/card';
 	import { PlusCircle } from 'lucide-svelte';
 	import Adduser from '../../../lib/components/custom/adduser.svelte';
-	import { componentSide } from '../../../lib/component.store';
+	import { componentData, componentSide } from '../../../lib/component.store';
 	import AddStock from '../../../lib/components/custom/addStock.svelte';
 
 	componentSide.set(null);
 
 	function addComponent() {
 		componentSide.set(AddStock);
+		componentData.set(null);
 	}
 </script>
 
@@ -35,4 +36,3 @@
 	<!-- </Card.Content>
 	</Card.Root> -->
 </div>
- 

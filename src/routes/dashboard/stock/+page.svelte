@@ -2,36 +2,28 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Card from '../../../lib/components/ui/card';
 
-	import Adduser from '../../../lib/components/custom/adduser.svelte';
-	import type { PageData } from './$types';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import type { Stock } from '../../../database/model';
 	import { liveQuery } from 'dexie';
 	import { db } from '../../../database/db';
-	import Switch from '../../../lib/components/ui/switch/switch.svelte';
 	import Button from '../../../lib/components/ui/button/button.svelte';
-	import { Trash2 } from 'lucide-svelte';
-	import CalendarIcon from 'svelte-radix/Calendar.svelte';
-	import {
-		CalendarDate,
-		DateFormatter,
-		type DateValue,
-		getLocalTimeZone
-	} from '@internationalized/date';
-	import { cn } from '$lib/utils.js';
-	import { Calendar } from '$lib/components/ui/calendar/index.js';
-	import * as Popover from '$lib/components/ui/popover/index.js';
+	import { Trash2, Edit } from 'lucide-svelte';
+	import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
+	import { toNumber } from '$lib/utils.js';
 	import Badge from '../../../lib/components/ui/badge/badge.svelte';
 	import DatePickerWithRange from '../../../lib/components/custom/date-picker-with-range.svelte';
 	import type { DateRange } from 'bits-ui';
+	import { componentData, componentSide } from '../../../lib/component.store';
+	import AddStock from '../../../lib/components/custom/addStock.svelte';
 
 	let onDelete = false;
 	let deleteStock: Stock;
 	$: stockList = liveQuery(async () => {
 		return await db.stock.where('stockDate').between(startDate, endDate).toArray();
 	});
-	async function updateStock(stock: Stock) {
-		// await db.Stock.update(stock.id, { status: stock.status });
+	function updateStock(stock: Stock) {
+		componentSide.set(AddStock);
+		componentData.set(stock);
 	}
 
 	const df = new DateFormatter('en-US', {
@@ -69,9 +61,9 @@
 					<Table.Head>Date</Table.Head>
 					<Table.Head>Item</Table.Head>
 					<Table.Head>Opening Stock</Table.Head>
-					<Table.Head>Dip Stock</Table.Head>
 					<Table.Head>Closing Stock</Table.Head>
-					<Table.Head>Closing Stock(Auto)</Table.Head>
+					<Table.Head>Stock By Sales</Table.Head>
+					<Table.Head>Stock By System</Table.Head>
 					<Table.Head>Discrepancy</Table.Head>
 					<Table.Head></Table.Head>
 				</Table.Row>
@@ -87,12 +79,15 @@
 								</Badge>
 							</Table.Cell>
 							<Table.Cell>{stock.openingStock}</Table.Cell>
-							<Table.Cell>{stock.dipStock}</Table.Cell>
 							<Table.Cell>{stock.closingStock}</Table.Cell>
-							<Table.Cell>0</Table.Cell>
-							<Table.Cell>0</Table.Cell>
+							<Table.Cell>{stock.stockBySales}</Table.Cell>
+							<Table.Cell>{stock.stockBySystem}</Table.Cell>
+							<Table.Cell>{toNumber(stock.stockBySales - stock.stockBySystem)}</Table.Cell>
 							<Table.Cell>
 								<div class="flex items-center justify-end space-x-2">
+									<Button on:click={() => updateStock(stock)} size="icon" variant="ghost">
+										<Edit size={16}></Edit>
+									</Button>
 									<Button
 										on:click={() => {
 											deleteStock = stock;

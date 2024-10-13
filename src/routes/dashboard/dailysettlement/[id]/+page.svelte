@@ -44,7 +44,11 @@
 		pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
 
 		// Save the PDF
-		pdf.save('download.pdf');
+		if ($summary?.createdOn) {
+			pdf.save(
+				`${$summary.createdOn.getFullYear()}/${$summary.createdOn.getMonth() + 1}/${$summary.createdOn.getDate()}-summary.pdf`
+			);
+		}
 	}
 
 	$: summary = liveQuery(async () => {

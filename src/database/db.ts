@@ -7,6 +7,7 @@ import type {
 	OliSalesModel,
 	Price,
 	SaleModel,
+	SalesSummary,
 	Staff,
 	Stock,
 	UserAccount
@@ -25,6 +26,7 @@ const db = new Dexie('petromax') as Dexie & {
 	sales: EntityTable<SaleModel, 'id'>;
 	oilsales: EntityTable<OliSalesModel, 'id'>;
 	oil: EntityTable<Oil, 'id'>;
+	salesSummary: EntityTable<SalesSummary, 'id'>;
 };
 
 // Schema declaration:
@@ -38,7 +40,8 @@ db.version(1).stores({
 	oilsales: '++id, salesDate, employeeName,[salesDate+employeeName]',
 	expenses: '++id, title, createdOn',
 	credit: '++id, vehicle, phoneNumber,[vehicle+type],createdOn',
-	oil: '++id, name,size, unitPrice,createdOn'
+	oil: '++id, name,size, unitPrice,createdOn',
+	salesSummary: '++id, createdOn'
 });
 
 db.transaction('rw', db.price, function (price) {

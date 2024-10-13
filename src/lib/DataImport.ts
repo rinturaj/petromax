@@ -14,7 +14,7 @@ export class DataImport {
 
 		for (let i = 0; i < keys.length; i++) {
 			const key = keys[i];
-			let value = json[key];
+			let value = JSON.parse(JSON.stringify(json[key]));
 			console.log(value);
 
 			const keysplit = key.split('-');
@@ -24,30 +24,48 @@ export class DataImport {
 			console.log(value, keysplit, table, id);
 
 			progress = ((i + 1) * 100) / keys.length;
-			console.log(progress);
 
 			importStatus.set(progress);
 			switch (table) {
 				case 'staff':
-					db.staff.put(value);
+					value.createdOn = new Date(value.createdOn);
+					await db.staff.put(value);
 					break;
 				case 'nosil':
-					db.nosil.put(value);
+					await db.nosil.put(value);
 					break;
 				case 'price':
-					db.price.put(value);
+					value.updatedOn = new Date(value.updatedOn);
+
+					await db.price.put(value);
 					break;
 				case 'stock':
-					db.stock.put(value);
+					value.stockDate = new Date(value.stockDate);
+					value.createdOn = new Date(value.createdOn);
+					await db.stock.put(value);
 					break;
 				case 'expenses':
-					db.expenses.put(value);
+					value.createdOn = new Date(value.createdOn);
+					await db.expenses.put(value);
 					break;
 				case 'credit':
-					db.credit.put(value);
+					value.createdOn = new Date(value.createdOn);
+					await db.credit.put(value);
 					break;
 				case 'sales':
-					db.sales.put(value);
+					value.salesDate = new Date(value.salesDate);
+					value.createdOn = new Date(value.createdOn);
+					await db.sales.put(value);
+					break;
+				case 'oil':
+					value.createdOn = new Date(value.createdOn);
+
+					await db.oil.put(value);
+					break;
+				case 'oilsales':
+					value.salesDate = new Date(value.salesDate);
+					value.createdOn = new Date(value.createdOn);
+					await db.oilsales.put(value);
 					break;
 			}
 		}

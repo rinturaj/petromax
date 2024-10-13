@@ -1,5 +1,6 @@
 import {
 	Box,
+	CalendarCheck,
 	ChartPie,
 	CreditCard,
 	DollarSign,
@@ -29,6 +30,13 @@ export const salesRoutes: Route[] = [
 		label: '',
 		link: base + '/dashboard/overview',
 		icon: ChartPie,
+		variant: 'ghost'
+	},
+	{
+		title: 'Daily Settlement',
+		label: '',
+		link: base + '/dashboard/dailysettlement',
+		icon: CalendarCheck,
 		variant: 'ghost'
 	},
 	{

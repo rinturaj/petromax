@@ -11,7 +11,7 @@
 	import SaleOrder from '../../../lib/components/custom/saleOrder.svelte';
 	import { CalendarIcon, Edit, Expand, Check, ListFilter } from 'lucide-svelte';
 	import { Trash } from 'svelte-radix';
-	import { cn } from '$lib/utils.js';
+	import { cn, toNumber } from '$lib/utils.js';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import {
@@ -141,7 +141,7 @@
 			<Card.Root>
 				<Card.Header class="pb-2">
 					<Card.Description>Today's</Card.Description>
-					<Card.Title class="currency text-4xl">{totalDay.revenue}</Card.Title>
+					<Card.Title class="currency text-4xl">{toNumber(totalDay.revenue)}</Card.Title>
 				</Card.Header>
 				<Card.Content></Card.Content>
 				<Card.Footer>
@@ -151,7 +151,7 @@
 			<Card.Root>
 				<Card.Header class="pb-2">
 					<Card.Description>This Month</Card.Description>
-					<Card.Title class="currency text-3xl">{revenueMonth.revenue}</Card.Title>
+					<Card.Title class="currency text-3xl">{toNumber(revenueMonth.revenue)}</Card.Title>
 				</Card.Header>
 				<Card.Content></Card.Content>
 				<Card.Footer>
@@ -230,7 +230,9 @@
 									<Table.Cell class="hidden sm:table-cell">
 										<Badge class="mx-1 text-xs" variant="default">{sales.items.length}</Badge>
 									</Table.Cell>
-									<Table.Cell class="currency hidden md:table-cell">{sales.actuals}</Table.Cell>
+									<Table.Cell class="currency hidden md:table-cell"
+										>{toNumber(sales.actuals)}</Table.Cell
+									>
 
 									<Table.Cell class="text-right">
 										<Button on:click={() => addComponent(sales)} size="icon" variant="ghost">

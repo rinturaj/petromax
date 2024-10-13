@@ -38,6 +38,7 @@
 	import { SaleOrder as SaleOrderClass } from '../../../database/model';
 	import DatePickerWithRange from '../../../lib/components/custom/date-picker-with-range.svelte';
 	import type { DateRange } from 'bits-ui';
+	import SalesOverview from '../../../lib/components/custom/dashboard/salesOverview.svelte';
 	componentSide.set(null);
 
 	function addComponent(sales?: SaleModel) {
@@ -176,11 +177,11 @@
 			<Card.Root>
 				<Card.Header class="pb-2">
 					<Card.Description>Today's</Card.Description>
-					<Card.Title class="currency text-4xl">{totalDay.collected}</Card.Title>
+					<Card.Title class="currency text-4xl">{toNumber(totalDay.collected)}</Card.Title>
 				</Card.Header>
 				<Card.Content>
 					<div class="text-xs {totalDay.discrepancyPer < 0 ? 'text-red-500' : 'text-green-700'}">
-						{totalDay.discrepancyPer}% discrepancy
+						{toNumber(totalDay.discrepancyPer)}% discrepancy
 					</div>
 				</Card.Content>
 				<Card.Footer>
@@ -193,13 +194,13 @@
 			<Card.Root>
 				<Card.Header class="pb-2">
 					<Card.Description>Selected Date Range</Card.Description>
-					<Card.Title class="currency text-3xl">{revenueMonth.collected}</Card.Title>
+					<Card.Title class="currency text-3xl">{toNumber(revenueMonth.collected)}</Card.Title>
 				</Card.Header>
 				<Card.Content>
 					<div
 						class="text-xs {revenueMonth.discrepancyPer < 0 ? 'text-red-500' : 'text-green-700'}"
 					>
-						{revenueMonth.discrepancyPer}% discrepancy
+						{toNumber(revenueMonth.discrepancyPer)}% discrepancy
 					</div>
 				</Card.Content>
 				<Card.Footer>
@@ -211,44 +212,7 @@
 			</Card.Root>
 		</div>
 
-		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-			<Card.Root>
-				<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-					<Card.Title class="text-sm font-medium">Total Revenue</Card.Title>
-					<!-- <DollarSign class="h-4 w-4 text-muted-foreground" /> -->
-				</Card.Header>
-				<Card.Content>
-					<div class="currency text-2xl font-bold">{revenueMonth.revenue}</div>
-				</Card.Content>
-			</Card.Root>
-			<Card.Root>
-				<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-					<Card.Title class="text-sm  font-medium">Collection</Card.Title>
-					<!-- <Users class="h-4 w-4 text-muted-foreground" /> -->
-				</Card.Header>
-				<Card.Content>
-					<div class="currency text-2xl font-bold">{revenueMonth.collected}</div>
-				</Card.Content>
-			</Card.Root>
-			<Card.Root>
-				<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-					<Card.Title class="text-sm font-medium">Credit</Card.Title>
-					<!-- <CreditCard class="h-4 w-4 text-muted-foreground" /> -->
-				</Card.Header>
-				<Card.Content>
-					<div class="currency text-2xl font-bold">{revenueMonth.credit}</div>
-				</Card.Content>
-			</Card.Root>
-			<Card.Root>
-				<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-					<Card.Title class="text-sm font-medium">Discrepancy</Card.Title>
-					<Activity class="h-4 w-4 text-muted-foreground" />
-				</Card.Header>
-				<Card.Content>
-					<div class="currency text-2xl font-bold">{revenueMonth.discrepancy}</div>
-				</Card.Content>
-			</Card.Root>
-		</div>
+		<SalesOverview {revenueMonth}></SalesOverview>
 
 		<Card.Root>
 			<Card.Header class="flex flex-row justify-between px-7">

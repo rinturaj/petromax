@@ -12,6 +12,9 @@ export function cn(...inputs: ClassValue[]) {
 export function toNumber(number: number): number {
 	return parseFloat(Number(number).toFixed(2));
 }
+export function toFixed(number?: number): string {
+	return Number(number).toFixed(2);
+}
 
 type FlyAndScaleParams = {
 	y?: number;

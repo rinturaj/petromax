@@ -17,6 +17,14 @@
 		unitPrice: 0,
 		createdOn: new Date()
 	};
+
+	export let data: Oil;
+
+	$: if (!!data) {
+		console.log(data);
+		newData = data;
+	}
+
 	let add = () => {
 		db.oil.add(newData);
 		componentSide.set(null);

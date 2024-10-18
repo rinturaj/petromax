@@ -29,6 +29,13 @@
 	$: creditList = liveQuery(async () => {
 		return await db.credit.where('createdOn').between(startDate, endDate, true, true).toArray();
 	});
+	$: expenList = liveQuery(async () => {
+		return await db.expenses.where('createdOn').between(startDate, endDate, true, true).toArray();
+	});
+
+	$: totalExpen = $expenList
+		? $expenList.map((x) => x.amount || 0).reduce((sum, x) => (-x - sum) * -1, 0)
+		: 0;
 
 	$: totalSettled = $creditList
 		? $creditList
@@ -109,7 +116,7 @@
 
 	let add = () => {
 		data.creditReceived = totalSettled;
-		data.totalSaleInHand = sales.byCash;
+		data.totalSaleInHand = sales.byCash + sales.card + sales.upiPayment;
 		data.totalCollectionReceived = cashRecords;
 		data.cash = sales.byCash;
 		data.card = sales.card;
@@ -119,9 +126,10 @@
 		data.total = sales.actuals;
 		data.oilSalesActuals = toNumber(oilsales.saleActuls);
 		data.oilSalesReceived = toNumber(oilsales.sale);
+		data.expenses = toNumber(totalExpen);
 
 		data.excessInHand = toNumber(cashRecords - sales.byCash);
-		data.balance = toNumber(data.excessInHand - totalSettled - data.oilSalesReceived);
+		data.balance = toNumber(data.excessInHand - totalSettled - data.oilSalesReceived - totalExpen);
 		if (data.id == undefined) db.salesSummary.add(data);
 		else db.salesSummary.update(data.id, { ...data });
 
@@ -195,6 +203,10 @@
 						<span class="text-sm font-semibold">Oil Sales Collection</span>
 						<span class="currency text-lg font-bold text-blue-700">{toNumber(oilsales.sale)}</span>
 					</div>
+					<div class="flex items-center justify-between border-b">
+						<span class="text-sm font-semibold">Expenses</span>
+						<span class="currency text-lg font-bold text-red-700">{toNumber(totalExpen)}</span>
+					</div>
 				</div>
 				<div class="grid gap-3">
 					<Table.Root>
@@ -234,10 +246,12 @@
 		</ScrollArea>
 	</Card.Content>
 	<Card.Footer class="justify-end">
-		<div class="grid w-full grid-cols-6 gap-2">
+		<div class="grid w-full grid-cols-4 gap-2">
 			<div class="grid">
-				<h6 class=" text-xs text-muted-foreground">Total Sale in Hand</h6>
-				<h6 class="currency text-sm font-semibold">{sales.byCash}</h6>
+				<h6 class=" text-xs text-muted-foreground">Total Sale</h6>
+				<h6 class="currency text-sm font-semibold">
+					{toNumber(sales.byCash + sales.upiPayment + sales.card)}
+				</h6>
 			</div>
 			<div class="grid">
 				<h6 class=" text-xs text-muted-foreground">Total Cash In Hand</h6>
@@ -257,6 +271,10 @@
 						? 'text-green-600'
 						: 'text-red-600'}"
 				>
+					<span class="text-xs text-muted-foreground">
+						{toNumber(cashRecords)} -
+						{toNumber(sales.byCash)} =
+					</span>
 					{toNumber(cashRecords - sales.byCash)}
 				</h6>
 			</div>
@@ -268,17 +286,30 @@
 				<h6 class=" text-xs text-muted-foreground">Oil Sale</h6>
 				<h6 class="currency text-sm font-semibold">{toNumber(oilsales.sale)}</h6>
 			</div>
+			<div class="grid">
+				<h6 class=" text-xs text-muted-foreground">Expenses</h6>
+				<h6 class="currency text-sm font-semibold">{toNumber(totalExpen)}</h6>
+			</div>
 
 			<div class="grid">
 				<h6 class=" text-xs text-muted-foreground">Balance</h6>
 				<h6
 					class="currency text-sm font-extrabold {toNumber(
-						cashRecords - sales.byCash - totalSettled - oilsales.sale
+						cashRecords -
+							(sales.byCash + sales.upi + sales.card) -
+							totalSettled -
+							oilsales.sale -
+							totalExpen
 					) > 0
 						? 'text-green-600'
 						: 'text-red-600'}"
 				>
-					{toNumber(cashRecords - sales.byCash - totalSettled - oilsales.sale)}
+					{toNumber(
+						cashRecords -
+							(sales.byCash + sales.upiPayment + sales.card) -
+							totalSettled -
+							oilsales.sale
+					)}
 				</h6>
 			</div>
 		</div>

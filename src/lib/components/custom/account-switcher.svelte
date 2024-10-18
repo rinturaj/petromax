@@ -9,6 +9,7 @@
 	import { redirect } from '@sveltejs/kit';
 	import { base } from '$app/paths';
 	import { goto } from '$app/navigation';
+	import { role } from '../../component.store';
 
 	export let isCollapsed: boolean;
 
@@ -26,6 +27,10 @@
 			icon: UserRoundCog
 		}
 	];
+
+	accounts = accounts.filter((x) => ($role == 'admin' && x.label == 'Sales') || $role == 'root');
+
+	console.log($role, accounts);
 
 	export let selectedAccount = accounts[0];
 </script>

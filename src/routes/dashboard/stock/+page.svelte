@@ -64,6 +64,7 @@
 					<Table.Head>Closing Stock</Table.Head>
 					<Table.Head>Stock By Sales</Table.Head>
 					<Table.Head>Stock By System</Table.Head>
+					<Table.Head>TT Recipt</Table.Head>
 					<Table.Head>Dip Stock</Table.Head>
 					<Table.Head>Discrepancy</Table.Head>
 					<Table.Head></Table.Head>
@@ -83,6 +84,7 @@
 							<Table.Cell>{stock.closingStock}</Table.Cell>
 							<Table.Cell>{stock.stockBySales}</Table.Cell>
 							<Table.Cell>{stock.stockBySystem}</Table.Cell>
+							<Table.Cell>{stock.ttRecipt}</Table.Cell>
 							<Table.Cell>{stock.dipStock}</Table.Cell>
 							<Table.Cell>{toNumber(stock.dipStock - stock.stockBySystem)}</Table.Cell>
 							<Table.Cell>

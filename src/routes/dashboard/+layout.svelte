@@ -86,7 +86,7 @@
 	}
 </script>
 
-<div class="hidden h-screen md:block">
+<div class=" block h-screen">
 	<Resizable.PaneGroup direction="horizontal" {onLayoutChange} class="h-full items-stretch">
 		<Resizable.Pane
 			defaultSize={defaultLayout[0]}
@@ -133,7 +133,7 @@
 							<Button
 								on:click={() => {
 									logout();
-									goto({ base } + '/');
+									goto(`/${base}`);
 								}}
 								variant="outline"
 								size="icon"><LogOut></LogOut></Button
@@ -142,7 +142,8 @@
 							<Button
 								on:click={() => {
 									logout();
-									goto({ base } + '/');
+
+									goto(`/${base}`);
 								}}
 								class="w-full"
 								variant="outline"
@@ -166,6 +167,8 @@
 
 <Dialog.Root open={$componentSide != null} closeOnOutsideClick={false} closeOnEscape={false}>
 	<Dialog.Content class="max-w-5xl p-0">
-		<svelte:component this={$componentSide} data={$componentData} />
+		<ScrollArea class="max-h-screen"
+			><svelte:component this={$componentSide} data={$componentData} /></ScrollArea
+		>
 	</Dialog.Content>
 </Dialog.Root>

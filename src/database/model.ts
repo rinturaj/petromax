@@ -62,6 +62,7 @@ export interface Stock {
 	stockBySystem: number;
 	stockBySales: number;
 	closingStock: number;
+	ttRecipt: number;
 	type: string;
 	createdOn: Date;
 	stockDate: Date;
@@ -258,6 +259,7 @@ export interface SalesSummary {
 	balance: number;
 	oilSalesActuals: number;
 	oilSalesReceived: number;
+	expenses: number;
 }
 
 export class SalesSummaryClass implements SalesSummary {
@@ -277,6 +279,7 @@ export class SalesSummaryClass implements SalesSummary {
 	balance: number;
 	oilSalesActuals: number;
 	oilSalesReceived: number;
+	expenses: number;
 	constructor() {
 		this.createdOn = new Date();
 		this.records = this.generateRecoders();
@@ -293,6 +296,7 @@ export class SalesSummaryClass implements SalesSummary {
 		this.balance = 0;
 		this.oilSalesActuals = 0;
 		this.oilSalesReceived = 0;
+		this.expenses = 0;
 	}
 
 	generateRecoders(): SalesRecord[] {

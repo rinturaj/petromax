@@ -91,12 +91,16 @@
 				<div class="font-semibold">Sales Details</div>
 				<ul class="grid gap-3">
 					<li class="flex items-center justify-between">
-						<span class="text-muted-foreground"> Cash In Hand </span>
+						<span class="text-muted-foreground"> A) Cash In Hand </span>
 						<span class="currency">{toFixed($summary?.totalCollectionReceived)}</span>
 					</li>
 					<li class="flex items-center justify-between">
-						<span class="text-muted-foreground"> Sales In Hand </span>
+						<span class="text-muted-foreground">B) Sales In Hand </span>
 						<span class="currency">{toFixed($summary?.totalSaleInHand)}</span>
+					</li>
+					<li class="flex items-center justify-between">
+						<span class="text-muted-foreground">C) Cash </span>
+						<span class="currency">{toFixed($summary?.cash)}</span>
 					</li>
 					<li
 						class="flex items-center justify-between font-extrabold {$summary?.excessInHand ==
@@ -104,7 +108,7 @@
 							? 'text-green-600'
 							: 'text-red-600'} "
 					>
-						<span class="text-muted-foreground"> Excess </span>
+						<span class="text-muted-foreground"> Excess (A-C) </span>
 						<span class="currency">{toFixed($summary?.excessInHand)}</span>
 					</li>
 				</ul>
@@ -122,6 +126,14 @@
 					<li class="flex items-center justify-between font-extrabold">
 						<span class="text-muted-foreground">Oil Sales </span>
 						<span class="currency text-green-700">{toFixed($summary?.oilSalesReceived)}</span>
+					</li>
+				</ul>
+				<Separator class="my-2" />
+
+				<ul class="grid gap-3">
+					<li class="flex items-center justify-between font-extrabold">
+						<span class="text-muted-foreground">Expenses </span>
+						<span class="currency text-red-700">{toFixed($summary?.expenses)}</span>
 					</li>
 				</ul>
 				<Separator class="my-2" />

@@ -6,6 +6,7 @@ export const componentData = writable();
 export const importStatus = writable(0);
 
 export const isAuthenticated = writable(true);
+export const role = writable('admin');
 export const viewSummary = writable(0);
 
 export function login() {

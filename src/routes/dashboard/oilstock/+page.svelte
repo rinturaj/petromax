@@ -10,19 +10,21 @@
 	import { liveQuery } from 'dexie';
 	import { db } from '../../../database/db';
 	import Button from '../../../lib/components/ui/button/button.svelte';
-	import { CalendarIcon, Trash2 } from 'lucide-svelte';
+	import { CalendarIcon, Trash2, Edit } from 'lucide-svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import Calendar from '../../../lib/components/ui/calendar/calendar.svelte';
 	import { cn } from '../../../lib/utils';
 	import type { DateRange } from 'bits-ui';
 	import DatePickerWithRange from '../../../lib/components/custom/date-picker-with-range.svelte';
+	import { componentData, componentSide } from '../../../lib/component.store';
+	import AddOil from '../../../lib/components/custom/addOil.svelte';
 
 	let onDelete = false;
 	let deleteOil: Oil;
 
 	$: oilList = liveQuery(async () => {
-		return await db.oil.where('createdOn').between(startDate, endDate).toArray();
+		return await db.oil.toArray();
 	});
 
 	const df = new DateFormatter('en-US', {
@@ -30,14 +32,14 @@
 	});
 	let dateValue: DateRange;
 
-	$: startDate =
-		dateValue != null && dateValue.start != null
-			? dateValue.start?.toDate(getLocalTimeZone())
-			: new Date();
-	$: endDate =
-		dateValue != null && dateValue.end != null
-			? dateValue.end?.toDate(getLocalTimeZone())
-			: new Date();
+	// $: startDate =
+	// 	dateValue != null && dateValue.start != null
+	// 		? dateValue.start?.toDate(getLocalTimeZone())
+	// 		: new Date();
+	// $: endDate =
+	// 	dateValue != null && dateValue.end != null
+	// 		? dateValue.end?.toDate(getLocalTimeZone())
+	// 		: new Date();
 </script>
 
 <div class="flex flex-row items-center justify-between py-3 align-middle">
@@ -48,7 +50,7 @@
 		</p>
 	</div>
 
-	<DatePickerWithRange bind:value={dateValue} />
+	<!-- <DatePickerWithRange bind:value={dateValue} /> -->
 </div>
 
 <Table.Root>
@@ -81,6 +83,15 @@
 					</Table.Cell>
 					<Table.Cell>
 						<div class="flex items-center justify-end space-x-2">
+							<Button
+								on:click={() => {
+									componentSide.set(AddOil);
+									componentData.set(o);
+								}}
+								variant="ghost"
+							>
+								<Edit class="h-4 w-4 " />
+							</Button>
 							<Button
 								on:click={() => {
 									deleteOil = o;

@@ -22,7 +22,8 @@
 		stockDate: new Date(),
 		type: '',
 		stockBySales: 0,
-		stockBySystem: 0
+		stockBySystem: 0,
+		ttRecipt: 0
 	};
 	export let data: Stock;
 
@@ -105,7 +106,7 @@
 		<Card.Description>Create or update stock details</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<div class="grid gap-6">
+		<div class="grid grid-cols-2 gap-6">
 			<div class="grid gap-3">
 				<Label for="stockDate">Date</Label>
 				<Input
@@ -165,6 +166,9 @@
 					id="name"
 					type="number"
 					bind:value={newData.stockBySystem}
+					on:change={() => {
+						newData.closingStock = toNumber(newData.ttRecipt) + toNumber(newData.stockBySystem);
+					}}
 					class="w-full"
 					placeholder="price "
 				/>
@@ -175,6 +179,19 @@
 					id="name"
 					type="number"
 					bind:value={newData.stockBySales}
+					class="w-full"
+					placeholder="price "
+				/>
+			</div>
+			<div class="grid gap-3">
+				<Label for="name">TT Recipt</Label>
+				<Input
+					id="name"
+					type="number"
+					bind:value={newData.ttRecipt}
+					on:change={() => {
+						newData.closingStock = toNumber(newData.ttRecipt) + toNumber(newData.stockBySystem);
+					}}
 					class="w-full"
 					placeholder="price "
 				/>

@@ -133,7 +133,7 @@
 							<Button
 								on:click={() => {
 									logout();
-									goto(`/${base}`);
+									goto(`${base}/`);
 								}}
 								variant="outline"
 								size="icon"><LogOut></LogOut></Button
@@ -143,7 +143,7 @@
 								on:click={() => {
 									logout();
 
-									goto(`/${base}`);
+									goto(`${base}/`);
 								}}
 								class="w-full"
 								variant="outline"

@@ -49,6 +49,15 @@ db.transaction('rw', db.price, function (price) {
 });
 
 db.on('changes', function (changes) {
+	changes.forEach((change) => {
+		switch (change.type) {
+			case 2: // UPDATED
+				change.mods = change.obj;
+				break;
+		}
+	});
+	console.log(changes);
+
 	if ((window as any).electron) (window as any).electron.syncDatabase(changes);
 });
 

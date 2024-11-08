@@ -2,7 +2,6 @@
 	import { base } from '$app/paths';
 
 	import Button from '../lib/components/ui/button/button.svelte';
-	import { db } from '../database/db';
 	import { onMount } from 'svelte';
 	import Input from '../lib/components/ui/input/input.svelte';
 	import Label from '../lib/components/ui/label/label.svelte';
@@ -14,15 +13,6 @@
 	import { toast } from 'svelte-sonner';
 	import { login } from '../lib/component.store';
 	// import { ipcRenderer } from 'electron';
-
-	onMount(async () => {
-		db.userAccount.add({
-			id: 1,
-			email: 'admin',
-			password: '1122',
-			name: 'admin'
-		});
-	});
 	let email = '';
 	let password = '';
 	let disabled = true;

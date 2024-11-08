@@ -44,9 +44,9 @@ db.version(1).stores({
 	salesSummary: '++id, createdOn'
 });
 
-db.transaction('rw', db.price, function (price) {
-	console.log('wrote');
-});
+// db.transaction('rw', db.price, function (price) {
+// 	console.log('wrote');
+// });
 
 db.on('changes', function (changes) {
 	changes.forEach((change) => {
